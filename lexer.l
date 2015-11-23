@@ -2,8 +2,8 @@
 
 #include <string>
 #include <stdio.h>
+#include "node.hpp"
 #include "grammar.tab.h"
-
 #define SAVE_TOKEN yylval.str = new std::string(yytext, yyleng)
 
 extern "C" int yywrap() {

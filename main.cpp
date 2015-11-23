@@ -1,3 +1,4 @@
+#include "node.hpp"
 #include "grammar.tab.h"
 
 extern int yyparse();

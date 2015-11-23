@@ -94,14 +94,16 @@ public:
     Operator op;
     ExprNode *expr;
     UniExprNode( Operator op, ExprNode *expr ):
-            expr(expr), op(op) {}
+            op(op), expr(expr) {}
     virtual void deleteAll() { expr->deleteAll(); }
     ACCEPT();
 };
 
 class StmtNode: public ASTNode {
 public:
-    virtual void deleteAll() {}
+    ASTNode *stmt;
+    StmtNode(ASTNode *stmt): stmt(stmt) {}
+    virtual void deleteAll() { stmt->deleteAll(); }
     ACCEPT();
 };
 
@@ -114,7 +116,7 @@ public:
     ACCEPT();
 };
 
-class IfNode: public StmtNode {
+class IfNode: public ASTNode {
 public:
     ExprNode *cond;
     BlockNode *body;
@@ -126,7 +128,7 @@ public:
     ACCEPT();
 };
 
-class IfBlock: public StmtNode {
+class IfBlock: public ASTNode {
 public:
     std::vector<IfNode*> ifStmts;
     BlockNode *elseStmt;
@@ -137,22 +139,22 @@ public:
     ACCEPT();
 };
 
-class ForNode: public StmtNode {
+class ForNode: public ASTNode {
 public:
-    IdNode *var;
+    std::string *var;
     ExprNode *cond;
     BlockNode *body;
-    ForNode(IdNode *var, ExprNode *cond, BlockNode *body):
+    ForNode(std::string *var, ExprNode *cond, BlockNode *body):
         var(var), cond(cond), body(body) {}
     virtual void deleteAll() {
-        var->deleteAll();
+        delete var;
         cond->deleteAll();
         body->deleteAll();
     }
     ACCEPT();
 };
 
-class WhileNode: public StmtNode {
+class WhileNode: public ASTNode {
 public:
     ExprNode *cond;
     BlockNode *body;
@@ -184,40 +186,55 @@ public:
 
 class CallNode: public ExprNode {
 public:
-    IdNode *id;
+    std::string *id;
     ArgsNode *args;
-    CallNode(IdNode *id, ArgsNode *args): id(id), args(args) {};
+    CallNode(std::string *id, ArgsNode *args): id(id), args(args) {};
     virtual void deleteAll() {
-        id->deleteAll();
+        delete id;
         args->deleteAll();
     }
     ACCEPT();
 };
 
-class DefNode: public ASTNode {
+class FuncDefNode: public ASTNode {
 public:
-    IdNode *id;
+    std::string *id;
     ParamsNode *args;
-    ExprNode *body;
+    TypeNode *type;
+    BlockNode *body;
 
-    DefNode(IdNode *id, ParamsNode *args, ExprNode *body):
-            id(id), args(args), body(body) {}
+    FuncDefNode(std::string *id, ParamsNode *args,
+                TypeNode *type, BlockNode *body):
+            id(id), args(args), type(type), body(body) {}
     virtual void deleteAll() {
-        id->deleteAll();
+        delete id;
         args->deleteAll();
         body->deleteAll();
     }
     ACCEPT();
 };
 
-class AssignNode: public ASTNode {
+class VarDefNode: public ASTNode {
 public:
-    IdNode *id;
+    TypedIdNode *id;
     ExprNode *expr;
 
-    AssignNode(IdNode *id, ExprNode *expr): id(id), expr(expr) {}
+    VarDefNode(TypedIdNode *id, ExprNode *expr): id(id), expr(expr) {}
     virtual void deleteAll() {
         id->deleteAll();
+        expr->deleteAll();
+    }
+    ACCEPT();
+};
+
+class AssignNode: public ASTNode {
+public:
+    std::string *id;
+    ExprNode *expr;
+
+    AssignNode(std::string *id, ExprNode *expr): id(id), expr(expr) {}
+    virtual void deleteAll() {
+        delete id;
         expr->deleteAll();
     }
     ACCEPT();

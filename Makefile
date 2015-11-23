@@ -1,7 +1,7 @@
 CXX = g++
 CXXFLAGS = -Wall -MMD
 EXEC = rattle
-OBJECTS = main.o grammar.o lexer.o
+OBJECTS = grammar.o lexer.o main.o node.o
 DEPENDS = ${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS}
