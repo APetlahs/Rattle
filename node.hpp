@@ -128,14 +128,27 @@ public:
     ACCEPT();
 };
 
+class ElifNode: public ASTNode {
+public:
+    std::vector<IfNode*> elifStmts;
+    ElifNode(): elifStmts() {}
+    void push(IfNode *ifStmt) { elifStmts.push_back(ifStmt); }
+    virtual void deleteAll();
+    ACCEPT();
+};
+
 class IfBlock: public ASTNode {
 public:
-    std::vector<IfNode*> ifStmts;
+    IfNode *ifStmt;
+    ElifNode *elifStmts;
     BlockNode *elseStmt;
-    IfBlock(IfNode *ifStmt): ifStmts(1,ifStmt), elseStmt(NULL) {}
-    void push(IfNode *elifStmt) { ifStmts.push_back(elifStmt); }
-    void setElse(BlockNode *elseStmt) { this->elseStmt = elseStmt; }
-    virtual void deleteAll();
+    IfBlock(IfNode *ifStmt, ElifNode *elifStmts, BlockNode *elseStmt):
+        ifStmt(ifStmt), elifStmts(elifStmts), elseStmt(elseStmt) {}
+    virtual void deleteAll() {
+        ifStmt->deleteAll();
+        elifStmts->deleteAll();
+        elseStmt->deleteAll();
+    }
     ACCEPT();
 };
 

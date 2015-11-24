@@ -3,13 +3,12 @@
 using namespace rattle::ast;
 using std::vector;
 
-void IfBlock::deleteAll() {
-    for (vector<IfNode*>::iterator i = ifStmts.begin();
-         i != ifStmts.end(); ++i)
+void ElifNode::deleteAll() {
+    for (vector<IfNode*>::iterator i = elifStmts.begin();
+         i != elifStmts.end(); ++i)
     {
         (*i)->deleteAll();
     }
-    if(elseStmt) elseStmt->deleteAll();
 }
 
 void BlockNode::deleteAll() {

@@ -26,6 +26,9 @@
     rattle::ast::BlockNode *block;
     rattle::ast::ForNode *forblock;
     rattle::ast::WhileNode *whileblock;
+    rattle::ast::IfNode *ifnode;
+    rattle::ast::ElifNode *elifnode;
+    rattle::ast::IfBlock *ifblock;
     rattle::ast::ParamsNode *params;
     rattle::ast::ArgsNode *args;
     rattle::ast::CallNode *call;
@@ -49,13 +52,16 @@
 %token <fval> FLOAT
 
 %type <module> module
-%type <block> code_block
+%type <block> code_block else_block
 %type <stmt> statement
 %type <vardef> definition
 %type <assign> assignment
 %type <funcdef> func_def
 %type <whileblock> while_loop
 %type <forblock> for_loop
+%type <ifblock> if_elif_else
+%type <ifnode> if_block
+%type <elifnode> elif_blocks
 %type <expr> expr terminal
 %type <call> func_call
 %type <params> parameter_list parameter_loop
@@ -93,7 +99,7 @@ statement:
     | func_def end_stmt     { $$ = new StmtNode($1); }
     | while_loop            { $$ = new StmtNode($1); }
     | for_loop              { $$ = new StmtNode($1); }
-  //  | if_elif_else end_stmt { $$ = new StmtNode($1); }
+    | if_elif_else end_stmt { $$ = new StmtNode($1); }
     | RETURN expr end_stmt  { $$ = new StmtNode($2); }
     ;
 
@@ -126,28 +132,30 @@ for_loop:
     END FOR
                             { $$ = new ForNode($2,$4,$6); }
     ;
-/*
+
 if_elif_else:
     if_block
     elif_blocks
     else_block
     END IF
+                            { $$ = new IfBlock($1,$2,$3); }
     ;
 
 if_block:
-    IF expr ':' code_block
+    IF expr ':' code_block  { $$ = new IfNode($2,$4); }
     ;
 
 elif_blocks:
-    elif_blocks ELIF expr ':' code_block
-    |
+    elif_blocks ELIF expr ':'
+    code_block              { $1->push( new IfNode($3,$5) ); }
+    |                       { $$ = new ElifNode(); }
     ;
 
 else_block:
-    ELSE ':' code_block     { $$ = new BlockNode($3); }
-    |
+    ELSE ':' code_block     { $$ = $3; }
+    |                       { $$ = NULL; }
     ;
-*/
+
 expr:
     terminal                    { $$ = $1; }
     | expr bin_operator expr    { $$ = new BinExprNode($1,$2,$3); }
