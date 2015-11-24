@@ -62,7 +62,7 @@
 %type <ifblock> if_elif_else
 %type <ifnode> if_block
 %type <elifnode> elif_blocks
-%type <expr> expr terminal
+%type <expr> expr terminal uni_expr bin_expr
 %type <call> func_call
 %type <params> parameter_list parameter_loop
 %type <args> args_list args_loop
@@ -75,6 +75,9 @@
 %left '+' '-'
 %left '*' '/' '%'
 %left '^'
+%left BINARY
+%left UNARY
+
 
 %start module
 
@@ -158,10 +161,20 @@ else_block:
 
 expr:
     terminal                    { $$ = $1; }
-    | expr bin_operator expr    { $$ = new BinExprNode($1,$2,$3); }
-    | uni_operator expr         { $$ = new UniExprNode($1,$2); }
     | func_call                 { $$ = $1; }
     | '(' expr ')'              { $$ = $2; }
+    | uni_expr                  { $$ = $1; }
+    | bin_expr                  { $$ = $1; }
+    ;
+
+uni_expr:
+    uni_operator expr
+    %prec UNARY                 { $$ = new UniExprNode($1,$2); }
+    ;
+
+bin_expr:
+    expr bin_operator expr
+    %prec BINARY                { $$ = new BinExprNode($1,$2,$3); }
     ;
 
 func_call:
@@ -189,7 +202,7 @@ args_loop:
     ;
 
 bin_operator:
-    EQ      { $$ = rattle::ast::EQ; }
+      EQ    { $$ = rattle::ast::EQ; }
     | GTE   { $$ = rattle::ast::GTE; }
     | LTE   { $$ = rattle::ast::LTE; }
     | NEQ   { $$ = rattle::ast::NEQ; }

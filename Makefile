@@ -8,7 +8,7 @@ ${EXEC}: ${OBJECTS}
 	${CXX} ${CXXFLAGS} -o ${EXEC} ${OBJECTS}
 
 grammar.o: grammar.y
-	bison -d grammar.y
+	bison -d --verbose grammar.y
 	${CXX} ${CXXFLAGS} -c -o grammar.o grammar.tab.c
 
 lexer.o: lexer.l
