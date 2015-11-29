@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "visitor.hpp"
 
 namespace rattle {
@@ -25,6 +26,8 @@ public:
 
 class ExprNode: public ASTNode {
 public:
+    // This type is mutated by Visitors
+    TypeNode* type;
     virtual ~ExprNode() {}
     ACCEPT();
 };
@@ -108,7 +111,10 @@ public:
 class BlockNode: public ASTNode {
 public:
     std::vector<StmtNode*> stmts;
-    BlockNode(): stmts() {}
+    // This map stores the non-local symbols available to this code block.
+    // It is mutated by Visitors.
+    std::map<std::string, TypeNode*> nonLocalVars;
+    BlockNode(): stmts(), nonLocalVars() {}
     void push(StmtNode *stmt) { stmts.push_back(stmt); }
     virtual void deleteAll();
     ACCEPT();
