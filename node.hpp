@@ -8,14 +8,12 @@
 namespace rattle {
 namespace ast {
 
-namespace visit = rattle::visitor;
-
 enum Operator { ADD,SUB,MUL,DIV,POW,
                 MOD,AND,OR,NOT, LT,
                 GT,LTE,GTE,EQ,NEQ };
 
 // accept method for visitor
-#define ACCEPT() virtual void accept() {}//virtual void accept(visit::Visitor *v) { v->visit(this); }
+#define ACCEPT() virtual void accept(rattle::visitor::Visitor *v) { v->visit(this); }
 
 class ASTNode {
 public:
