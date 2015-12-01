@@ -1,6 +1,6 @@
 #include "node.hpp"
 #include "visitor_print.hpp"
-#include "visitor_check.hpp"
+#include "visitor_varcheck.hpp"
 #include "grammar.tab.h"
 using namespace rattle;
 
