@@ -1,46 +1,21 @@
-#ifndef _AST_VISITOR_HPP_
-#define _AST_VISITOR_HPP_
+#ifndef _VISITOR_PRINT_HPP_
+#define _VISITOR_PRINT_HPP_
+
+#include "visitor.hpp"
 
 namespace rattle {
-
-// forward declarations
-namespace ast {
-    class ASTNode;
-    class ExprNode;
-    class IntNode;
-    class FloatNode;
-    class IdNode;
-    class TypeNode;
-    class TypedIdNode;
-    class BinExprNode;
-    class UniExprNode;
-    class StmtNode;
-    class BlockNode;
-    class IfNode;
-    class ElifNode;
-    class IfBlock;
-    class ForNode;
-    class WhileNode;
-    class ParamsNode;
-    class ArgsNode;
-    class CallNode;
-    class FuncDefNode;
-    class VarDefNode;
-    class AssignNode;
-    class ModuleNode;
-}
-
 namespace visitor {
 
 /*
-* Abstract visitor class
-* for traversing the Rattle AST
+* class for printing AST tree,
+* for use in debugging purposes
 */
-class Visitor {
+class PrintVisitor: public Visitor {
 public:
-    virtual ~Visitor() {}
-    virtual void visit(ast::ASTNode *node);
-    virtual void visit(ast::ExprNode *node);
+    std::string prefix;
+    PrintVisitor(): prefix() {}
+    virtual ~PrintVisitor() {}
+
     virtual void visit(ast::IntNode *node);
     virtual void visit(ast::FloatNode *node);
     virtual void visit(ast::IdNode *node);
@@ -62,9 +37,11 @@ public:
     virtual void visit(ast::VarDefNode *node);
     virtual void visit(ast::AssignNode *node);
     virtual void visit(ast::ModuleNode *node);
+
 };
 
 } // namespace visitor
 } // namespace rattle
+
 
 #endif

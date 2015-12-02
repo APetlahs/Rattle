@@ -3,19 +3,18 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "visitor.hpp"
 
 namespace rattle {
 namespace ast {
-
-namespace visit = rattle::visitor;
 
 enum Operator { ADD,SUB,MUL,DIV,POW,
                 MOD,AND,OR,NOT, LT,
                 GT,LTE,GTE,EQ,NEQ };
 
 // accept method for visitor
-#define ACCEPT() virtual void accept() {}//virtual void accept(visit::Visitor *v) { v->visit(this); }
+#define ACCEPT() virtual void accept(rattle::visitor::Visitor *v) { v->visit(this); }
 
 class ASTNode {
 public:
@@ -27,6 +26,8 @@ public:
 
 class ExprNode: public ASTNode {
 public:
+    // This type is mutated by Visitors
+    TypeNode* type;
     virtual ~ExprNode() {}
     ACCEPT();
 };
@@ -110,7 +111,10 @@ public:
 class BlockNode: public ASTNode {
 public:
     std::vector<StmtNode*> stmts;
-    BlockNode(): stmts() {}
+    // This map stores the non-local symbols available to this code block.
+    // It is mutated by Visitors.
+    std::map<std::string, TypeNode*> nonLocalVars;
+    BlockNode(): stmts(), nonLocalVars() {}
     void push(StmtNode *stmt) { stmts.push_back(stmt); }
     virtual void deleteAll();
     ACCEPT();
