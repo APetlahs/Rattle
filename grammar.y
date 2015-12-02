@@ -112,14 +112,14 @@ definition:
     ;
 
 assignment:
-    IDENT '=' expr          { $$ = new AssignNode($1,$3); }
+    IDENT '=' expr          { $$ = new AssignNode(*$1,$3); delete $1;}
     ;
 
 func_def:
     FUNC IDENT '(' parameter_list ')' RARROW type ':'
         code_block
     END FUNC
-                            { $$ = new FuncDefNode($2,$4,$7,$9); }
+                            { $$ = new FuncDefNode(*$2,$4,$7,$9); delete $2; }
     ;
 
 while_loop:
@@ -133,7 +133,7 @@ for_loop:
     FOR IDENT IN expr ':'
         code_block
     END FOR
-                            { $$ = new ForNode($2,$4,$6); }
+                            { $$ = new ForNode(*$2,$4,$6); delete $2; }
     ;
 
 if_elif_else:
@@ -178,7 +178,7 @@ bin_expr:
     ;
 
 func_call:
-    IDENT '(' args_list ')'     { $$ = new CallNode($1,$3); }
+    IDENT '(' args_list ')'     { $$ = new CallNode(*$1,$3); delete $1; }
     ;
 
 parameter_list:
@@ -225,17 +225,17 @@ uni_operator:
     ;
 
 terminal:
-    IDENT   { $$ = new IdNode($1); }
+    IDENT   { $$ = new IdNode(*$1); delete $1; }
     | INT   { $$ = new IntNode($1); }
     | FLOAT { $$ = new FloatNode($1); }
     ;
 
 typed_var:
-    IDENT ':' type  { $$ = new TypedIdNode($1,$3); }
+    IDENT ':' type  { $$ = new TypedIdNode(*$1,$3); delete $1; }
     ;
 
 type:
-    IDENT                           { $$ = new TypeNode($1); }
+    IDENT                           { $$ = new TypeNode(*$1); delete $1; }
     //| '[' type ']' /* lists */
     //| '(' type_list ')' RARROW type
     //| '(' ')' RARROW type

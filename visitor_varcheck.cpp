@@ -13,7 +13,7 @@ void printMap(std::map<std::string, rattle::ast::TypeNode*> sym) {
     for(std::map<std::string, rattle::ast::TypeNode*>::iterator it = sym.begin();
         it != sym.end(); ++it)
     {
-        std::cout << it->first << ":" << *(it->second->id) << std::endl;
+        std::cout << it->first << ":" << it->second->id << std::endl;
     }
 }
 
@@ -34,21 +34,21 @@ void CheckVisitor::visit(ast::BlockNode *node) {
 }
 
 void CheckVisitor::visit(ast::VarDefNode *node) {
-    if (varExists(*(node->id->id), sym)) {
+    if (varExists(node->typedId->id, sym)) {
         error = true;
-        std::cerr << "variable " << *(node->id->id) << " previously defined" << std::endl;
+        std::cerr << "variable " << node->typedId->id << " previously defined" << std::endl;
     } else {
-        sym[*(node->id->id)] = node->id->type;
+        sym[node->typedId->id] = node->typedId->type;
     }
     Visitor::visit(node);
 }
 
 void CheckVisitor::visit(ast::IdNode *node) {
-    if (varExists(*(node->id), sym) || varExists(*(node->id), globalSym)) {
+    if (varExists(node->id, sym) || varExists(node->id, globalSym)) {
         return;
     }
     error = true;
-    std::cerr << "variable " << *(node->id) << " undeclared" << std::endl;
+    std::cerr << "variable " << node->id << " undeclared" << std::endl;
 }
 
 void CheckVisitor::visit(ast::ForNode *node) {
@@ -57,34 +57,34 @@ void CheckVisitor::visit(ast::ForNode *node) {
 
 void CheckVisitor::visit(ast::FuncDefNode *node) {
     #define params node->args->args
-    if (varExists(*(node->id), sym)) {
+    if (varExists(node->id, sym)) {
         error = true;
-        std::cerr << "function " << *(node->id) << " previously defined" << std::endl;
+        std::cerr << "function " << node->id << " previously defined" << std::endl;
     }
-    sym[*(node->id)] = node->type;
+    sym[node->id] = node->type;
     std::map<std::string, ast::TypeNode*> tempSym = sym;
     for (std::vector<ast::TypedIdNode*>::iterator i = params.begin();
          i != params.end(); ++i)
     {
-        sym.erase(*((*i)->id));
-        sym[*((*i)->id)] = (*i)->type;
+        sym.erase((*i)->id);
+        sym[(*i)->id] = (*i)->type;
     }
     Visitor::visit(node);
     sym = tempSym;
 }
 
 void CheckVisitor::visit(ast::CallNode *node) {
-    if (!(varExists(*(node->id), sym) || varExists(*(node->id), globalSym))) {
+    if (!(varExists(node->id, sym) || varExists(node->id, globalSym))) {
         error = true;
-        std::cerr << "variable " << *(node->id) << " undeclared" << std::endl;
+        std::cerr << "variable " << node->id << " undeclared" << std::endl;
     }
     Visitor::visit(node);
 }
 
 void CheckVisitor::visit(ast::AssignNode *node) {
-    if (!(varExists(*(node->id), sym) || varExists(*(node->id), globalSym))) {
+    if (!(varExists(node->id, sym) || varExists(node->id, globalSym))) {
         error = true;
-        std::cerr << "variable " << *(node->id) << " undeclared" << std::endl;
+        std::cerr << "variable " << node->id << " undeclared" << std::endl;
     }
     Visitor::visit(node);
 }

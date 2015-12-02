@@ -20,7 +20,7 @@ class ASTNode {
 public:
     virtual ~ASTNode() {}
     // explicit dtor to delete all child nodes
-    virtual void deleteAll() = 0;
+    virtual void deleteAll() {};
     ACCEPT();
 };
 
@@ -36,7 +36,6 @@ class IntNode: public ExprNode {
 public:
     long val;
     IntNode(const long val): val(val) {}
-    virtual void deleteAll() {}
     ACCEPT();
 };
 
@@ -44,35 +43,29 @@ class FloatNode: public ExprNode {
 public:
     double val;
     FloatNode(const double val): val(val) {}
-    virtual void deleteAll() {}
     ACCEPT();
 };
 
 class IdNode: public ExprNode {
 public:
-    std::string *id;
-    IdNode(std::string *id): id(id) {}
-    virtual void deleteAll() { delete id; }
+    std::string id;
+    IdNode(std::string id): id(id) {}
     ACCEPT();
 };
 
 class TypeNode: public ASTNode {
 public:
-    std::string *id;
-    TypeNode(std::string *id): id(id) {}
-    virtual void deleteAll() { delete id; }
+    std::string id;
+    TypeNode(std::string id): id(id) {}
     ACCEPT();
 };
 
 class TypedIdNode: public ASTNode {
 public:
-    std::string *id;
+    std::string id;
     TypeNode *type;
-    TypedIdNode( std::string *id, TypeNode *type ): id(id), type(type) {}
-    virtual void deleteAll() {
-        delete id;
-        type->deleteAll();
-    }
+    TypedIdNode( std::string id, TypeNode *type ): id(id), type(type) {}
+    virtual void deleteAll() { type->deleteAll(); }
     ACCEPT();
 };
 
@@ -158,13 +151,12 @@ public:
 
 class ForNode: public ASTNode {
 public:
-    std::string *var;
+    std::string var;
     ExprNode *cond;
     BlockNode *body;
-    ForNode(std::string *var, ExprNode *cond, BlockNode *body):
+    ForNode(std::string var, ExprNode *cond, BlockNode *body):
         var(var), cond(cond), body(body) {}
     virtual void deleteAll() {
-        delete var;
         cond->deleteAll();
         body->deleteAll();
     }
@@ -203,28 +195,24 @@ public:
 
 class CallNode: public ExprNode {
 public:
-    std::string *id;
+    std::string id;
     ArgsNode *args;
-    CallNode(std::string *id, ArgsNode *args): id(id), args(args) {};
-    virtual void deleteAll() {
-        delete id;
-        args->deleteAll();
-    }
+    CallNode(std::string id, ArgsNode *args): id(id), args(args) {};
+    virtual void deleteAll() { args->deleteAll(); }
     ACCEPT();
 };
 
 class FuncDefNode: public ASTNode {
 public:
-    std::string *id;
+    std::string id;
     ParamsNode *args;
     TypeNode *type;
     BlockNode *body;
 
-    FuncDefNode(std::string *id, ParamsNode *args,
+    FuncDefNode(std::string id, ParamsNode *args,
                 TypeNode *type, BlockNode *body):
             id(id), args(args), type(type), body(body) {}
     virtual void deleteAll() {
-        delete id;
         args->deleteAll();
         body->deleteAll();
     }
@@ -233,12 +221,12 @@ public:
 
 class VarDefNode: public ASTNode {
 public:
-    TypedIdNode *id;
+    TypedIdNode *typedId;
     ExprNode *expr;
 
-    VarDefNode(TypedIdNode *id, ExprNode *expr): id(id), expr(expr) {}
+    VarDefNode(TypedIdNode *typedId, ExprNode *expr): typedId(typedId), expr(expr) {}
     virtual void deleteAll() {
-        id->deleteAll();
+        typedId->deleteAll();
         expr->deleteAll();
     }
     ACCEPT();
@@ -246,14 +234,11 @@ public:
 
 class AssignNode: public ASTNode {
 public:
-    std::string *id;
+    std::string id;
     ExprNode *expr;
 
-    AssignNode(std::string *id, ExprNode *expr): id(id), expr(expr) {}
-    virtual void deleteAll() {
-        delete id;
-        expr->deleteAll();
-    }
+    AssignNode(std::string id, ExprNode *expr): id(id), expr(expr) {}
+    virtual void deleteAll() { expr->deleteAll(); }
     ACCEPT();
 };
 

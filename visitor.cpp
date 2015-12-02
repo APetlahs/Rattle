@@ -101,7 +101,7 @@ void Visitor::visit(ast::FuncDefNode *node) {
 }
 
 void Visitor::visit(ast::VarDefNode *node) {
-    VISIT(node->id);
+    VISIT(node->typedId);
     VISIT(node->expr);
 }
 

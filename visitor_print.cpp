@@ -24,19 +24,19 @@ void PrintVisitor::visit(ast::FloatNode *node) {
 
 void PrintVisitor::visit(ast::IdNode *node) {
     std::cout << prefix << "IdNode: " << node << std::endl;
-    std::cout << prefix << *(node->id) << std::endl;
+    std::cout << prefix << node->id << std::endl;
     VISIT(node);
 }
 
 void PrintVisitor::visit(ast::TypeNode *node) {
     std::cout << prefix << "TypeNode: " << node << std::endl;
-    std::cout << prefix << *(node->id) << std::endl;
+    std::cout << prefix << node->id << std::endl;
     VISIT(node);
 }
 
 void PrintVisitor::visit(ast::TypedIdNode *node) {
     std::cout << prefix << "TypedIdNode: " << node << std::endl;
-    std::cout << prefix << *(node->id) << std::endl;
+    std::cout << prefix << node->id << std::endl;
     VISIT(node);
 }
 
@@ -114,7 +114,7 @@ void PrintVisitor::visit(ast::VarDefNode *node) {
 
 void PrintVisitor::visit(ast::AssignNode *node) {
     std::cout << prefix << "AssignNode: " << node << std::endl;
-    std::cout << prefix << *(node->id) << std::endl;
+    std::cout << prefix << node->id << std::endl;
     VISIT(node);
 }
 
