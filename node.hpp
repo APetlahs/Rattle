@@ -7,6 +7,7 @@
 #include "visitor.hpp"
 
 namespace rattle {
+
 namespace ast {
 
 enum Operator { ADD,SUB,MUL,DIV,POW,
@@ -26,8 +27,6 @@ public:
 
 class ExprNode: public ASTNode {
 public:
-    // This type is mutated by Visitors
-    TypeNode* type;
     virtual ~ExprNode() {}
     ACCEPT();
 };

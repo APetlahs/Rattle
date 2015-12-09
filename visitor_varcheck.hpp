@@ -5,22 +5,24 @@
 #include <map>
 #include <string>
 #include "visitor.hpp"
+#include "type.hpp"
+#include "symbol.hpp"
 
 namespace rattle {
 namespace visitor {
 
 /*
 * visitor for checking varible declarations
+* and building a symbol table
 */
 class CheckVisitor : public Visitor {
-    std::map<std::string, ast::TypeNode*> sym;
-    std::map<std::string, ast::TypeNode*> globalSym;
+    SymbolTable sym;
+    std::vector<SymbolTable> globalSymStack;
     bool error;
 
-    bool varExists(std::string &var, std::map<std::string, ast::TypeNode*> dict);
-
+    bool wasDefined(const std::string &id);
 public:
-    CheckVisitor(): sym(), globalSym(), error(false) {}
+    CheckVisitor(): sym(), error(false) {}
 
     virtual void visit(ast::BlockNode *node);
     virtual void visit(ast::IdNode* node);
