@@ -10,6 +10,14 @@ namespace visitor {
 struct Symbol {
     std::string id;
     Type type;
+    Symbol(): id(), type() {}
+    Symbol(std::string id, Type t): id(id), type(t) {}
+    Symbol(const Symbol &other): id(other.id), type(other.type) {}
+    Symbol &operator=(const Symbol &other) {
+        id = other.id;
+        type = other.type;
+        return *this;
+    }
 };
 
 class SymbolTable {

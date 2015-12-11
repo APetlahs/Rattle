@@ -2,13 +2,16 @@
 #include "node.hpp"
 using namespace rattle::visitor;
 
-Type::Type(ast::TypeNode* type): typeClass(Null), name(""), returnType(), params() {
-    typeClass = type->id == "Null" ? Null : Primitive;
-    name = type->id;
-}
+Type::Type(): typeClass(Null), primitive(), returnType(NULL), params() {}
 
-Type::Type(ast::FuncDefNode* func) {
-    typeClass = Callable;
+Type::Type(ast::TypeNode *type):
+    typeClass(Primitive), primitive(type->id),
+    returnType(NULL), params()
+{}
+
+Type::Type(ast::FuncDefNode *func):
+    typeClass(Callable), primitive()
+{
     returnType = new Type(func->type);
     for (std::vector<ast::TypedIdNode*>::iterator i = func->args->args.begin();
          i != func->args->args.end(); ++i)
@@ -17,6 +20,26 @@ Type::Type(ast::FuncDefNode* func) {
     }
 }
 
+Type::Type(const Type &other):
+    typeClass(other.typeClass), primitive(other.primitive),
+    params(other.params)
+{
+    returnType = other.returnType != NULL ? new Type(*(other.returnType)) : NULL;
+}
+
+Type::~Type() {
+    delete returnType;
+}
+
+Type &Type::operator=(const Type &other) {
+    typeClass = other.typeClass;
+    primitive = other.primitive;
+    returnType = other.returnType != NULL ? new Type(*(other.returnType)) : NULL;
+    params = other.params;
+    return *this;
+}
+
+/*
 bool TypeValidator::compatible(const Type &t1, const Type &t2) {
     if (t1.typeClass == Callable && t2.typeClass == Callable) {
         if (t1.params.size() != t2.params.size()) {
@@ -42,3 +65,4 @@ Type TypeValidator::castUniOp(const ast::Operator op, const Type &t1) {
     Type t;
     return t;
 }
+*/

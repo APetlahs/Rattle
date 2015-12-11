@@ -8,6 +8,11 @@
 
 namespace rattle {
 
+namespace visitor {
+// forward decleration to avoid cyclic dependencies
+class Type;
+};
+
 namespace ast {
 
 enum Operator { ADD,SUB,MUL,DIV,POW,
@@ -27,6 +32,7 @@ public:
 
 class ExprNode: public ASTNode {
 public:
+    visitor::Type *type;
     virtual ~ExprNode() {}
     ACCEPT();
 };

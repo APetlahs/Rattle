@@ -29,9 +29,7 @@ void CheckVisitor::visit(ast::VarDefNode *node) {
         error = true;
         std::cerr << "variable " << node->typedId->id << " previously defined" << std::endl;
     } else {
-        Symbol s;
-        s.id = node->typedId->id;
-        s.type = Type(node->typedId->type);
+        Symbol s = Symbol(node->typedId->id, Type(node->typedId->type));
         sym.add(s);
     }
     Visitor::visit(node);
@@ -55,25 +53,19 @@ void CheckVisitor::visit(ast::FuncDefNode *node) {
         error = true;
         std::cerr << "function " << node->id << " previously defined" << std::endl;
     }
-    Symbol s;
-    s.id = node->id;
-    s.type = node->type;
+    Symbol s = Symbol(node->id, Type(node->type));
     sym.add(s);
     globalSymStack.push_back(sym);
     sym = SymbolTable();
     for (std::vector<ast::TypedIdNode*>::iterator i = params.begin();
          i != params.end(); ++i)
     {
-        Symbol s;
-        s.id = (*i)->id;
-        s.type = Type((*i)->type);
+        Symbol s = Symbol((*i)->id, Type((*i)->type));
         sym.add(s);
     }
     Visitor::visit(node);
     sym = globalSymStack.back();
     globalSymStack.pop_back();
-
-
 }
 
 void CheckVisitor::visit(ast::CallNode *node) {
@@ -91,3 +83,19 @@ void CheckVisitor::visit(ast::AssignNode *node) {
     }
     Visitor::visit(node);
 }
+
+void CheckVisitor::visit(ast::IntNode *node) {
+}
+
+void CheckVisitor::visit(ast::FloatNode *node) {
+
+}
+
+void CheckVisitor::visit(ast::BinExprNode *node) {
+
+}
+
+void CheckVisitor::visit(ast::UniExprNode *node) {
+
+}
+
