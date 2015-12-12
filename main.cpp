@@ -12,8 +12,8 @@ int main(void) {
     rattle::visitor::CheckVisitor checker = rattle::visitor::CheckVisitor();
     yyparse();
     if(!module) return 1;
-    module->accept(&printer);
     module->accept(&checker);
+    module->accept(&printer);
     module->deleteAll();
     return 0;
 }

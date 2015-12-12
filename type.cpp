@@ -1,3 +1,4 @@
+#include <sstream>
 #include "type.hpp"
 #include "node.hpp"
 using namespace rattle::visitor;
@@ -38,6 +39,36 @@ Type::Type(const Type &other):
 
 Type::~Type() {
     delete returnType;
+}
+
+std::string Type::toStr() {
+    std::stringstream ss;
+    if (typeClass == Primitive) {
+        switch(primitive) {
+            case Int: return "int";
+            case Float: return "float";
+            case Str: return "str";
+            case Bool: return "bool";
+            default: return "unknown type";
+        }
+    } else if (typeClass == Array) {
+        ss << "Array[" << returnType->toStr() << "]";
+        return ss.str();
+    } else if (typeClass == Callable) {
+        ss << "Callable(";
+        for (std::vector<Type>::iterator i = params.begin();
+             i != params.end(); ++i)
+        {
+            ss << (*i).toStr();
+            if (i+1 != params.end()) ss << ",";
+        }
+        ss << ")->" << returnType->toStr();
+        return ss.str();
+    } else if (typeClass == Null) {
+        return "Null";
+    } else {
+        return "Unknown Type!";
+    }
 }
 
 Type &Type::operator=(const Type &other) {

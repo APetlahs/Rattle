@@ -29,6 +29,8 @@ public:
     Type(ast::FuncDefNode *func);
     Type(const Type &other);
     ~Type();
+
+    std::string toStr();
     bool compatible(const Type &other);
     Type &operator=(const Type &other);
     bool operator==(const Type &other) const;
