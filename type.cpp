@@ -2,12 +2,21 @@
 #include "node.hpp"
 using namespace rattle::visitor;
 
-Type::Type(): typeClass(Null), primitive(), returnType(NULL), params() {}
+Type::Type():
+    typeClass(Null), primitive(), returnType(NULL), params() {}
+
+Type::Type(const enum Primitive type):
+    typeClass(Primitive), primitive(type), returnType(NULL), params() {}
 
 Type::Type(ast::TypeNode *type):
-    typeClass(Primitive), primitive(type->id),
-    returnType(NULL), params()
-{}
+    typeClass(Primitive), returnType(NULL), params()
+{
+    if (type->id == "int") primitive = Int;
+    else if (type->id == "float") primitive = Float;
+    else if (type->id == "str") primitive = Str;
+    else if (type->id == "bool") primitive = Bool;
+    // TODO: else throw something
+}
 
 Type::Type(ast::FuncDefNode *func):
     typeClass(Callable), primitive()
@@ -32,6 +41,7 @@ Type::~Type() {
 }
 
 Type &Type::operator=(const Type &other) {
+    if (this == &other) return *this;
     typeClass = other.typeClass;
     primitive = other.primitive;
     returnType = other.returnType != NULL ? new Type(*(other.returnType)) : NULL;
@@ -39,30 +49,28 @@ Type &Type::operator=(const Type &other) {
     return *this;
 }
 
-/*
-bool TypeValidator::compatible(const Type &t1, const Type &t2) {
-    if (t1.typeClass == Callable && t2.typeClass == Callable) {
-        if (t1.params.size() != t2.params.size()) {
-            return false;
-        }
-        for (unsigned int i = 0; i < t1.params.size(); ++i) {
-            if (!compatible(t1.params[i], t2.params[i])) return false;
-        }
-        return true;
-    } else if (t1.typeClass == t2.typeClass) {
-        return true;
-    } else {
-        return false;
+bool Type::compatible(const Type &other) {
+    return *this == other;
+}
+
+bool Type::operator==(const Type &other) const {
+    if (typeClass != other.typeClass) return false;
+    switch(typeClass) {
+        case Null: return true;
+        case Primitive: return primitive == other.primitive;
+        case Array: return returnType->compatible(*(other.returnType));
+        case Callable:
+            if (!returnType->compatible((*other.returnType))) return false;
+            if (params.size() != other.params.size()) return false;
+            for (unsigned int i = params.size(); i-- > 0;) {
+                Type t = params[i];
+                if (!t.compatible(other.params[i])) return false;
+            }
+            return true;
+        default: return false;
     }
 }
 
-Type TypeValidator::castBinOp(const ast::Operator op, const Type &t1, const Type &t2) {
-    Type t;
-    return t;
+bool Type::operator!=(const Type &other) const {
+    return !(*this == other);
 }
-
-Type TypeValidator::castUniOp(const ast::Operator op, const Type &t1) {
-    Type t;
-    return t;
-}
-*/

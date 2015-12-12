@@ -1,11 +1,9 @@
 #ifndef _VISITOR_VAR_CHECK_HPP_
 #define _VISITOR_VAR_CHECK_HPP_
-
 #include <vector>
 #include <map>
 #include <string>
 #include "visitor.hpp"
-#include "type.hpp"
 #include "symbol.hpp"
 
 namespace rattle {
@@ -19,11 +17,10 @@ class CheckVisitor : public Visitor {
     SymbolTable sym;
     std::vector<SymbolTable> globalSymStack;
     bool error;
-
-    bool wasDefined(const std::string &id);
+    Symbol getSymbol(std::string const &id);
+    bool wasDefined(std::string const &id);
 public:
     CheckVisitor(): sym(), error(false) {}
-
     virtual void visit(ast::BlockNode *node);
     virtual void visit(ast::IdNode* node);
     virtual void visit(ast::FuncDefNode *node);
@@ -33,8 +30,6 @@ public:
     virtual void visit(ast::AssignNode *node);
     virtual void visit(ast::IntNode *node);
     virtual void visit(ast::FloatNode *node);
-    virtual void visit(ast::BinExprNode *node);
-    virtual void visit(ast::UniExprNode *node);
 };
 
 }

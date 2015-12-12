@@ -5,7 +5,7 @@
 #include "visitor_varcheck.hpp"
 using namespace rattle::visitor;
 
-bool CheckVisitor::wasDefined(const std::string &id) {
+bool CheckVisitor::wasDefined(std::string const &id) {
     if (sym.exists(id)) {
         return true;
     } else {
@@ -14,6 +14,20 @@ bool CheckVisitor::wasDefined(const std::string &id) {
         }
     }
     return false;
+}
+
+Symbol CheckVisitor::getSymbol(std::string const &id) {
+    if (sym.exists(id)) {
+        return sym.get(id);
+    } else {
+        for(unsigned int i = globalSymStack.size(); i-- > 0;) {
+            if (globalSymStack[i].exists(id)) {
+                return globalSymStack[i].get(id);
+            }
+        }
+    }
+    // TODO: maybe throw something
+    return Symbol();
 }
 
 void CheckVisitor::visit(ast::BlockNode *node) {
@@ -37,6 +51,7 @@ void CheckVisitor::visit(ast::VarDefNode *node) {
 
 void CheckVisitor::visit(ast::IdNode *node) {
     if (wasDefined(node->id)) {
+        node->type = new Type(getSymbol(node->id).type);
         return;
     }
     error = true;
@@ -85,17 +100,9 @@ void CheckVisitor::visit(ast::AssignNode *node) {
 }
 
 void CheckVisitor::visit(ast::IntNode *node) {
+    node->type = new Type(Int);
 }
 
 void CheckVisitor::visit(ast::FloatNode *node) {
-
+    node->type = new Type(Float);
 }
-
-void CheckVisitor::visit(ast::BinExprNode *node) {
-
-}
-
-void CheckVisitor::visit(ast::UniExprNode *node) {
-
-}
-

@@ -1,36 +1,39 @@
 #ifndef _TYPE_HPP_
 #define _TYPE_HPP_
-
 #include <vector>
-#include "node.hpp"
+#include <string>
 
 namespace rattle  {
+
+namespace ast {
+// forward declerations
+class TypeNode;
+class FuncDefNode;
+}
+
 namespace visitor {
 
 enum TypeClass { Null, Primitive, Array, Callable };
+enum Primitive { Int, Float, Str, Bool };
 
-struct Type {
-    TypeClass typeClass;
-    std::string primitive;
+class Type {
+public:
+    enum TypeClass typeClass;
+    enum Primitive primitive;
     Type *returnType;
     std::vector<Type> params;
 
     Type();
+    Type(const enum Primitive type);
     Type(ast::TypeNode *type);
     Type(ast::FuncDefNode *func);
     Type(const Type &other);
     ~Type();
+    bool compatible(const Type &other);
     Type &operator=(const Type &other);
+    bool operator==(const Type &other) const;
+    bool operator!=(const Type &other) const;
 };
-
-/*
-class TypeValidator {
-public:
-    bool compatible(const Type &t1, const Type &t2);
-    Type castBinOp(const ast::Operator op, const Type &t1, const Type &t2);
-    Type castUniOp(const ast::Operator op, const Type &t1);
-};
-*/
 
 } // namespace visitor
 } // namespace rattle

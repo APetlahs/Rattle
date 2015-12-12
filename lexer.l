@@ -3,6 +3,7 @@
 #include <string>
 #include <stdio.h>
 #include "node.hpp"
+#include "operator.hpp"
 #include "grammar.tab.h"
 #define SAVE_TOKEN yylval.str = new std::string(yytext, yyleng)
 
