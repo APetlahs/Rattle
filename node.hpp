@@ -4,14 +4,17 @@
 #include <string>
 #include <vector>
 #include <map>
+#include "operator.hpp"
 #include "visitor.hpp"
 
 namespace rattle {
-namespace ast {
 
-enum Operator { ADD,SUB,MUL,DIV,POW,
-                MOD,AND,OR,NOT, LT,
-                GT,LTE,GTE,EQ,NEQ };
+namespace visitor {
+// forward decleration to avoid cyclic dependencies
+class Type;
+};
+
+namespace ast {
 
 // accept method for visitor
 #define ACCEPT() virtual void accept(rattle::visitor::Visitor *v) { v->visit(this); }
@@ -26,8 +29,8 @@ public:
 
 class ExprNode: public ASTNode {
 public:
-    // This type is mutated by Visitors
-    TypeNode* type;
+    // type annotation for type-checking pass
+    visitor::Type *type;
     virtual ~ExprNode() {}
     ACCEPT();
 };
@@ -236,9 +239,10 @@ class AssignNode: public ASTNode {
 public:
     std::string id;
     ExprNode *expr;
+    visitor::Type *type; // TODO: should replace strng id with id node
 
     AssignNode(std::string id, ExprNode *expr): id(id), expr(expr) {}
-    virtual void deleteAll() { expr->deleteAll(); }
+    virtual void deleteAll();
     ACCEPT();
 };
 

@@ -5,46 +5,53 @@
 #include "visitor_varcheck.hpp"
 using namespace rattle::visitor;
 
-bool CheckVisitor::varExists(std::string &var, std::map<std::string, ast::TypeNode*> dict) {
-    return !(dict.find(var) == dict.end());
+bool CheckVisitor::wasDefined(std::string const &id) {
+    if (sym.exists(id)) {
+        return true;
+    } else {
+        for(unsigned int i = globalSymStack.size(); i-- > 0;) {
+            if (globalSymStack[i].exists(id)) return true;
+        }
+    }
+    return false;
 }
 
-void printMap(std::map<std::string, rattle::ast::TypeNode*> sym) {
-    for(std::map<std::string, rattle::ast::TypeNode*>::iterator it = sym.begin();
-        it != sym.end(); ++it)
-    {
-        std::cout << it->first << ":" << it->second->id << std::endl;
+Symbol CheckVisitor::getSymbol(std::string const &id) {
+    if (sym.exists(id)) {
+        return sym.get(id);
+    } else {
+        for(unsigned int i = globalSymStack.size(); i-- > 0;) {
+            if (globalSymStack[i].exists(id)) {
+                return globalSymStack[i].get(id);
+            }
+        }
     }
+    // TODO: maybe throw something
+    return Symbol();
 }
 
 void CheckVisitor::visit(ast::BlockNode *node) {
-    // swap vars
-    std::map<std::string, ast::TypeNode*> tempSym = sym;
-    std::map<std::string, ast::TypeNode*> tempGlobalSym = globalSym;
-    sym.insert(globalSym.begin(), globalSym.end());
-    globalSym = sym;
-    sym.clear();
-
-    node->nonLocalVars = globalSym;
+    globalSymStack.push_back(sym);
+    sym = SymbolTable();
     Visitor::visit(node);
-
-    // return symbols to previous state
-    sym = tempSym;
-    globalSym = tempGlobalSym;
+    sym = globalSymStack.back();
+    globalSymStack.pop_back();
 }
 
 void CheckVisitor::visit(ast::VarDefNode *node) {
-    if (varExists(node->typedId->id, sym)) {
+    if (sym.exists(node->typedId->id)) {
         error = true;
         std::cerr << "variable " << node->typedId->id << " previously defined" << std::endl;
     } else {
-        sym[node->typedId->id] = node->typedId->type;
+        Symbol s = Symbol(node->typedId->id, Type(node->typedId->type));
+        sym.add(s);
     }
     Visitor::visit(node);
 }
 
 void CheckVisitor::visit(ast::IdNode *node) {
-    if (varExists(node->id, sym) || varExists(node->id, globalSym)) {
+    if (wasDefined(node->id)) {
+        node->type = new Type(getSymbol(node->id).type);
         return;
     }
     error = true;
@@ -57,34 +64,47 @@ void CheckVisitor::visit(ast::ForNode *node) {
 
 void CheckVisitor::visit(ast::FuncDefNode *node) {
     #define params node->args->args
-    if (varExists(node->id, sym)) {
+    if (sym.exists(node->id)) {
         error = true;
         std::cerr << "function " << node->id << " previously defined" << std::endl;
     }
-    sym[node->id] = node->type;
-    std::map<std::string, ast::TypeNode*> tempSym = sym;
+    Symbol s = Symbol(node->id, Type(node));
+    sym.add(s);
+    globalSymStack.push_back(sym);
+    sym = SymbolTable();
     for (std::vector<ast::TypedIdNode*>::iterator i = params.begin();
          i != params.end(); ++i)
     {
-        sym.erase((*i)->id);
-        sym[(*i)->id] = (*i)->type;
+        Symbol s = Symbol((*i)->id, Type((*i)->type));
+        sym.add(s);
     }
     Visitor::visit(node);
-    sym = tempSym;
+    sym = globalSymStack.back();
+    globalSymStack.pop_back();
 }
 
 void CheckVisitor::visit(ast::CallNode *node) {
-    if (!(varExists(node->id, sym) || varExists(node->id, globalSym))) {
+    if (!wasDefined(node->id)) {
         error = true;
-        std::cerr << "variable " << node->id << " undeclared" << std::endl;
+        std::cerr << "function " << node->id << " undeclared" << std::endl;
     }
+    node->type = new Type(getSymbol(node->id).type);
     Visitor::visit(node);
 }
 
 void CheckVisitor::visit(ast::AssignNode *node) {
-    if (!(varExists(node->id, sym) || varExists(node->id, globalSym))) {
+    if (!wasDefined(node->id)) {
         error = true;
         std::cerr << "variable " << node->id << " undeclared" << std::endl;
     }
+    node->type = new Type(getSymbol(node->id).type);
     Visitor::visit(node);
+}
+
+void CheckVisitor::visit(ast::IntNode *node) {
+    node->type = new Type(Int);
+}
+
+void CheckVisitor::visit(ast::FloatNode *node) {
+    node->type = new Type(Float);
 }

@@ -2,6 +2,7 @@
     #include <stdlib.h>
     #include <stdio.h>
     #include "node.hpp"
+    #include "operator.hpp"
     using namespace rattle::ast;
 
     // root node
@@ -36,7 +37,7 @@
     rattle::ast::VarDefNode *vardef;
     rattle::ast::AssignNode *assign;
     rattle::ast::ModuleNode *module;
-    rattle::ast::Operator op;
+    rattle::Operator op;
     std::string *str;
     double fval;
     long ival;
@@ -202,26 +203,26 @@ args_loop:
     ;
 
 bin_operator:
-      EQ    { $$ = rattle::ast::EQ; }
-    | GTE   { $$ = rattle::ast::GTE; }
-    | LTE   { $$ = rattle::ast::LTE; }
-    | NEQ   { $$ = rattle::ast::NEQ; }
-    | '&'   { $$ = rattle::ast::AND; }
-    | '|'   { $$ = rattle::ast::OR; }
-    | '>'   { $$ = rattle::ast::GT; }
-    | '<'   { $$ = rattle::ast::LT; }
-    | '+'   { $$ = rattle::ast::ADD; }
-    | '-'   { $$ = rattle::ast::SUB; }
-    | '*'   { $$ = rattle::ast::MUL; }
-    | '/'   { $$ = rattle::ast::DIV; }
-    | '%'   { $$ = rattle::ast::MOD; }
-    | '^'   { $$ = rattle::ast::POW; }
+      EQ    { $$ = rattle::EQ; }
+    | GTE   { $$ = rattle::GTE; }
+    | LTE   { $$ = rattle::LTE; }
+    | NEQ   { $$ = rattle::NEQ; }
+    | '&'   { $$ = rattle::AND; }
+    | '|'   { $$ = rattle::OR; }
+    | '>'   { $$ = rattle::GT; }
+    | '<'   { $$ = rattle::LT; }
+    | '+'   { $$ = rattle::ADD; }
+    | '-'   { $$ = rattle::SUB; }
+    | '*'   { $$ = rattle::MUL; }
+    | '/'   { $$ = rattle::DIV; }
+    | '%'   { $$ = rattle::MOD; }
+    | '^'   { $$ = rattle::POW; }
     ;
 
 uni_operator:
-    '~'     { $$ = rattle::ast::NOT; }
-    | '!'   { $$ = rattle::ast::NOT; }
-    | '-'   { $$ = rattle::ast::SUB; }
+    '~'     { $$ = rattle::NOT; }
+    | '!'   { $$ = rattle::NOT; }
+    | '-'   { $$ = rattle::SUB; }
     ;
 
 terminal:

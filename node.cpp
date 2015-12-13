@@ -1,3 +1,4 @@
+#include "type.hpp"
 #include "node.hpp"
 
 using namespace rattle::ast;
@@ -27,4 +28,9 @@ void ArgsNode::deleteAll() {
     for (vector<ExprNode*>::iterator i = args.begin(); i != args.end(); ++i) {
         (*i)->deleteAll();
     }
+}
+
+void AssignNode::deleteAll() {
+    expr->deleteAll();
+    delete type;
 }
