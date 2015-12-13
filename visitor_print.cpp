@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include "node.hpp"
 #include "type.hpp"
 #include "visitor_print.hpp"
@@ -10,36 +11,29 @@ using namespace rattle::visitor;
                     Visitor::visit(node); \
                     prefix = oldPrefix;
 
+std::string printType(const std::string prefix, Type *t) {
+    if (t != NULL) return prefix + "Type: " + t->toStr();
+    return prefix + "Type: no type!";
+}
+
 void PrintVisitor::visit(ast::IntNode *node) {
     std::cout << prefix << "IntNode: " << node << std::endl;
     std::cout << prefix << node->val << std::endl;
-    if (node->type != NULL) {
-        std::cout << prefix << node->type->toStr() << std::endl;
-    } else {
-        std::cout << prefix << "no type!" << std::endl;
-    }
+    std::cout << printType(prefix, node->type) << std::endl;
     VISIT(node);
 }
 
 void PrintVisitor::visit(ast::FloatNode *node) {
     std::cout << prefix << "FloatNode: " << node << std::endl;
     std::cout << prefix << node->val << std::endl;
-    if (node->type != NULL) {
-        std::cout << prefix << node->type->toStr() << std::endl;
-    } else {
-        std::cout << prefix << "no type!" << std::endl;
-    }
+    std::cout << printType(prefix, node->type) << std::endl;
     VISIT(node);
 }
 
 void PrintVisitor::visit(ast::IdNode *node) {
     std::cout << prefix << "IdNode: " << node << std::endl;
     std::cout << prefix << node->id << std::endl;
-    if (node->type != NULL) {
-        std::cout << prefix << node->type->toStr() << std::endl;
-    } else {
-        std::cout << prefix << "no type!" << std::endl;
-    }
+    std::cout << printType(prefix, node->type) << std::endl;
     VISIT(node);
 }
 
@@ -58,22 +52,14 @@ void PrintVisitor::visit(ast::TypedIdNode *node) {
 void PrintVisitor::visit(ast::BinExprNode *node) {
     std::cout << prefix << "BinExprNode: " << node << std::endl;
     std::cout << prefix << "operator: " << node->op << std::endl;
-    if (node->type != NULL) {
-        std::cout << prefix << node->type->toStr() << std::endl;
-    } else {
-        std::cout << prefix << "no type!" << std::endl;
-    }
+    std::cout << printType(prefix, node->type) << std::endl;
     VISIT(node);
 }
 
 void PrintVisitor::visit(ast::UniExprNode *node) {
     std::cout << prefix << "UniExprNode: " << node << std::endl;
     std::cout << prefix << "operator: " << node->op << std::endl;
-    if (node->type != NULL) {
-        std::cout << prefix << node->type->toStr() << std::endl;
-    } else {
-        std::cout << prefix << "no type!" << std::endl;
-    }
+    std::cout << printType(prefix, node->type) << std::endl;
     VISIT(node);
 }
 
@@ -124,6 +110,7 @@ void PrintVisitor::visit(ast::ArgsNode *node) {
 
 void PrintVisitor::visit(ast::CallNode *node) {
     std::cout << prefix << "CallNode: " << node << std::endl;
+    std::cout << printType(prefix, node->type) << std::endl;
     VISIT(node);
 }
 

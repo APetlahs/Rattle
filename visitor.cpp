@@ -10,8 +10,6 @@ using namespace rattle::ast;
 
 void Visitor::visit(ast::ASTNode *node) {}
 
-void Visitor::visit(ast::ExprNode *node) {}
-
 void Visitor::visit(ast::IntNode *node) {}
 
 void Visitor::visit(ast::FloatNode *node) {}
@@ -19,6 +17,10 @@ void Visitor::visit(ast::FloatNode *node) {}
 void Visitor::visit(ast::IdNode *node) {}
 
 void Visitor::visit(ast::TypeNode *node) {}
+
+void Visitor::visit(ast::ExprNode *node) {
+    VISIT(node);
+}
 
 void Visitor::visit(ast::TypedIdNode *node) {
     VISIT(node->type);

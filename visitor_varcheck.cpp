@@ -68,7 +68,7 @@ void CheckVisitor::visit(ast::FuncDefNode *node) {
         error = true;
         std::cerr << "function " << node->id << " previously defined" << std::endl;
     }
-    Symbol s = Symbol(node->id, Type(node->type));
+    Symbol s = Symbol(node->id, Type(node));
     sym.add(s);
     globalSymStack.push_back(sym);
     sym = SymbolTable();
@@ -88,6 +88,7 @@ void CheckVisitor::visit(ast::CallNode *node) {
         error = true;
         std::cerr << "function " << node->id << " undeclared" << std::endl;
     }
+    node->type = new Type(getSymbol(node->id).type);
     Visitor::visit(node);
 }
 
@@ -96,6 +97,7 @@ void CheckVisitor::visit(ast::AssignNode *node) {
         error = true;
         std::cerr << "variable " << node->id << " undeclared" << std::endl;
     }
+    node->type = new Type(getSymbol(node->id).type);
     Visitor::visit(node);
 }
 
