@@ -23,7 +23,6 @@ extern void yyerror(const char *s);
 "const"                 return CONST;
 "var"                   return VAR;
 "func"                  return FUNC;
-"end"                   return END;
 "return"                return RETURN;
 "for"                   return FOR;
 "while"                 return WHILE;
@@ -40,8 +39,8 @@ extern void yyerror(const char *s);
 "!="                    return NEQ;
 ">="                    return GTE;
 "<="                    return LTE;
-[-+*/,:;!()<>\[\]|\{\}\&\%\$\^\=\n\~]  return *yytext;
-([ \t]|[:blank:])       ; /* skip whitespace */
+[-+*/,:;!()<>\[\]|\{\}\&\%\$\^\=\~]  return *yytext;
+([ \t\n])               ; /* skip whitespace */
 <<EOF>>                 return END_OF_FILE;
 .                       yyerror("invalid character");
 
