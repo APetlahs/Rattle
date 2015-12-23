@@ -24,6 +24,7 @@
     rattle::ast::BinExprNode *binexp;
     rattle::ast::UniExprNode *uniexp;
     rattle::ast::StmtNode *stmt;
+    rattle::ast::ReturnNode *returnStmt;
     rattle::ast::BlockNode *block;
     rattle::ast::ForNode *forblock;
     rattle::ast::WhileNode *whileblock;
@@ -109,7 +110,7 @@ statement:
     | while_loop            { $$ = new StmtNode($1); }
     | for_loop              { $$ = new StmtNode($1); }
     | if_elif_else          { $$ = new StmtNode($1); }
-    | RETURN expr end_stmt  { $$ = new StmtNode($2); }
+    | RETURN expr end_stmt  { $$ = new ReturnNode($2); }
     ;
 
 definition:
