@@ -66,6 +66,10 @@ void TypeCheckVisitor::visit(ast::FloatNode *node) {
     curType = node->type;
 }
 
+void TypeCheckVisitor::visit(ast::StringNode *node) {
+    curType = node->type;
+}
+
 void TypeCheckVisitor::visit(ast::BinExprNode *node) {
     Visitor::visit(node->lhs);
     Type *t1 = curType;
