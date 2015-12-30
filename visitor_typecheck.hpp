@@ -10,18 +10,24 @@ namespace visitor {
 
 class TypeCheckVisitor: public Visitor {
     Type *curType;
+    Type *returnType;
     CastMap caster;
+    bool inFunction;
     bool error;
 public:
-
+    TypeCheckVisitor():
+        curType(), caster(),
+        inFunction(false), error(false) {}
     virtual void visit(ast::IdNode *node);
     virtual void visit(ast::CallNode *node);
     virtual void visit(ast::VarDefNode *node);
+    virtual void visit(ast::FuncDefNode *node);
     virtual void visit(ast::AssignNode *node);
     virtual void visit(ast::IntNode *node);
     virtual void visit(ast::FloatNode *node);
     virtual void visit(ast::BinExprNode *node);
     virtual void visit(ast::UniExprNode *node);
+    virtual void visit(ast::ReturnNode *node);
 };
 
 } // namespace rattle
