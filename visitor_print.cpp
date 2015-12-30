@@ -68,6 +68,11 @@ void PrintVisitor::visit(ast::StmtNode *node) {
     VISIT(node);
 }
 
+void PrintVisitor::visit(ast::ReturnNode *node) {
+    std::cout << prefix << "ReturnNode: " << node << std::endl;
+    VISIT(node);
+}
+
 void PrintVisitor::visit(ast::BlockNode *node) {
     std::cout << prefix << "BlockNode: " << node << std::endl;
     VISIT(node);
