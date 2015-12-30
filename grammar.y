@@ -24,6 +24,7 @@
     rattle::ast::BinExprNode *binexp;
     rattle::ast::UniExprNode *uniexp;
     rattle::ast::StmtNode *stmt;
+    rattle::ast::ReturnNode *returnStmt;
     rattle::ast::BlockNode *block;
     rattle::ast::ForNode *forblock;
     rattle::ast::WhileNode *whileblock;
@@ -53,7 +54,7 @@
 %token <fval> FLOAT
 
 %type <module> module
-%type <block> code_block else_block
+%type <block> code_block else_block statements
 %type <stmt> statement
 %type <vardef> definition
 %type <assign> assignment
@@ -85,15 +86,20 @@
 %%
 
 module:
-    code_block END_OF_FILE  { module = new ModuleNode($1); YYACCEPT; }
+    statements END_OF_FILE  { module = new ModuleNode($1); YYACCEPT; }
     | END_OF_FILE           { module = new ModuleNode( new BlockNode() ); YYACCEPT; }
     ;
 
 code_block:
+    '{' statements '}'      { $$ = $2; }
+    | '{' '}'               { $$ = new BlockNode(); }
+    ;
+
+statements:
     statement               { $$ = new BlockNode(); $$->push($1); }
     | end_stmt /* empty */  { $$ = new BlockNode(); }
-    | code_block end_stmt
-    | code_block statement  { $1->push($2); }
+    | statements statement  { $$ = $1; $$->push($2); }
+    | statements end_stmt   { $$ = $1; }
     ;
 
 statement:
@@ -104,7 +110,7 @@ statement:
     | while_loop            { $$ = new StmtNode($1); }
     | for_loop              { $$ = new StmtNode($1); }
     | if_elif_else          { $$ = new StmtNode($1); }
-    | RETURN expr end_stmt  { $$ = new StmtNode($2); }
+    | RETURN expr end_stmt  { $$ = new ReturnNode($2); }
     ;
 
 definition:
@@ -117,24 +123,21 @@ assignment:
     ;
 
 func_def:
-    FUNC IDENT '(' parameter_list ')' RARROW type '{'
+    FUNC IDENT '(' parameter_list ')' RARROW type
         code_block
-    '}'
-                            { $$ = new FuncDefNode(*$2,$4,$7,$9); delete $2; }
+                            { $$ = new FuncDefNode(*$2,$4,$7,$8); delete $2; }
     ;
 
 while_loop:
-    WHILE expr '{'
+    WHILE expr
         code_block
-    '}'
-                            { $$ = new WhileNode($2,$4); }
+                            { $$ = new WhileNode($2,$3); }
     ;
 
 for_loop:
-    FOR IDENT IN expr '{'
+    FOR IDENT IN expr
         code_block
-    '}'
-                            { $$ = new ForNode(*$2,$4,$6); delete $2; }
+                            { $$ = new ForNode(*$2,$4,$5); delete $2; }
     ;
 
 if_elif_else:
@@ -145,20 +148,20 @@ if_elif_else:
     ;
 
 if_block:
-    IF expr '{'
+    IF expr
         code_block
-    '}'                     { $$ = new IfNode($2,$4); }
+                            { $$ = new IfNode($2,$3); }
     ;
 
 elif_blocks:
-    elif_blocks ELIF expr '{'
+    elif_blocks ELIF expr
         code_block
-    '}'                     { $1->push( new IfNode($3,$5) ); }
+                            { $1->push( new IfNode($3,$4) ); }
     |                       { $$ = new ElifNode(); }
     ;
 
 else_block:
-    ELSE '{' code_block '}' { $$ = $3; }
+    ELSE code_block         { $$ = $2; }
     |                       { $$ = NULL; }
     ;
 

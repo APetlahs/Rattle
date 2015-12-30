@@ -24,6 +24,7 @@ public:
     virtual void visit(ast::BinExprNode *node);
     virtual void visit(ast::UniExprNode *node);
     virtual void visit(ast::StmtNode *node);
+    virtual void visit(ast::ReturnNode *node);
     virtual void visit(ast::BlockNode *node);
     virtual void visit(ast::IfNode *node);
     virtual void visit(ast::ElifNode *node);

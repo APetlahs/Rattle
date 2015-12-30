@@ -8,7 +8,9 @@ using namespace rattle::ast;
 
 #define VISIT(node) node->accept(this);
 
-void Visitor::visit(ast::ASTNode *node) {}
+void Visitor::visit(ast::ASTNode *node) {
+    VISIT(node);
+}
 
 void Visitor::visit(ast::IntNode *node) {}
 
@@ -38,7 +40,11 @@ void Visitor::visit(ast::UniExprNode *node) {
 }
 
 void Visitor::visit(ast::StmtNode *node) {
-    VISIT(node->stmt)
+    VISIT(node->stmt);
+}
+
+void Visitor::visit(ast::ReturnNode *node) {
+    VISIT(node->stmt);
 }
 
 void Visitor::visit(ast::BlockNode *node) {

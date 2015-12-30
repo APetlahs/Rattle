@@ -112,6 +112,12 @@ public:
     ACCEPT();
 };
 
+class ReturnNode: public StmtNode {
+public:
+    ReturnNode(ExprNode *expr): StmtNode::StmtNode(expr) {}
+    ACCEPT();
+};
+
 class BlockNode: public ASTNode {
 public:
     std::vector<StmtNode*> stmts;

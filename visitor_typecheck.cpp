@@ -12,7 +12,7 @@ void TypeCheckVisitor::visit(ast::IdNode *node) {
 
 void TypeCheckVisitor::visit(ast::CallNode *node) {
     std::vector<ast::ExprNode*> args = node->args->args;
-    if (args.size() != node->type->params.size()) {
+    if (node->type->typeClass != Undefined && args.size() != node->type->params.size()) {
         std::cerr << "Invalid number of arguments" << std::endl;
         error = true;
         return;
@@ -108,4 +108,27 @@ void TypeCheckVisitor::visit(ast::UniExprNode *node) {
         node->type = new Type();
     }
     curType = node->type;
+}
+
+void TypeCheckVisitor::visit(ast::FuncDefNode *node) {
+    bool prevFunctionStatus = inFunction;
+    inFunction = true;
+    returnType = new Type(node->type);
+    Visitor::visit(node->body);
+    delete returnType;
+    inFunction = prevFunctionStatus;
+}
+
+void TypeCheckVisitor::visit(ast::ReturnNode *node) {
+    if (!inFunction) {
+        error = true;
+        std::cerr << "return statement can't occur outside a function!" << std::endl;
+        return;
+    }
+    Visitor::visit(node->stmt);
+    if (returnType && !returnType->compatible(*curType)) {
+        error = true;
+        std::cerr << "return type not compatible" << std::endl;
+        return;
+    }
 }
