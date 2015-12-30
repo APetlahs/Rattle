@@ -52,10 +52,11 @@ void CheckVisitor::visit(ast::VarDefNode *node) {
 void CheckVisitor::visit(ast::IdNode *node) {
     if (wasDefined(node->id)) {
         node->type = new Type(getSymbol(node->id).type);
-        return;
+    } else {
+        node->type = new Type();
+        error = true;
+        std::cerr << "variable " << node->id << " undeclared" << std::endl;
     }
-    error = true;
-    std::cerr << "variable " << node->id << " undeclared" << std::endl;
 }
 
 void CheckVisitor::visit(ast::ForNode *node) {
@@ -85,19 +86,23 @@ void CheckVisitor::visit(ast::FuncDefNode *node) {
 
 void CheckVisitor::visit(ast::CallNode *node) {
     if (!wasDefined(node->id)) {
+        node->type = new Type();
         error = true;
         std::cerr << "function " << node->id << " undeclared" << std::endl;
+    } else {
+        node->type = new Type(getSymbol(node->id).type);
     }
-    node->type = new Type(getSymbol(node->id).type);
     Visitor::visit(node);
 }
 
 void CheckVisitor::visit(ast::AssignNode *node) {
     if (!wasDefined(node->id)) {
+        node->type = new Type();
         error = true;
         std::cerr << "variable " << node->id << " undeclared" << std::endl;
+    } else {
+        node->type = new Type(getSymbol(node->id).type);
     }
-    node->type = new Type(getSymbol(node->id).type);
     Visitor::visit(node);
 }
 

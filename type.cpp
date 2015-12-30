@@ -4,7 +4,7 @@
 using namespace rattle::visitor;
 
 Type::Type():
-    typeClass(Null), primitive(), returnType(NULL), params() {}
+    typeClass(Undefined), primitive(Null), returnType(NULL), params() {}
 
 Type::Type(const enum Primitive type):
     typeClass(Primitive), primitive(type), returnType(NULL), params() {}
@@ -45,11 +45,12 @@ std::string Type::toStr() {
     std::stringstream ss;
     if (typeClass == Primitive) {
         switch(primitive) {
+            case Null: return "null";
             case Int: return "int";
             case Float: return "float";
             case Str: return "str";
             case Bool: return "bool";
-            default: return "unknown type";
+            default: return "unknown type"; // TODO: raise something
         }
     } else if (typeClass == Array) {
         ss << "Array[" << returnType->toStr() << "]";
@@ -64,10 +65,10 @@ std::string Type::toStr() {
         }
         ss << ")->" << returnType->toStr();
         return ss.str();
-    } else if (typeClass == Null) {
-        return "Null";
+    } else if (typeClass == Undefined) {
+        return "Undefined";
     } else {
-        return "Unknown Type!";
+        return "Unknown Type!"; // TODO: raise something
     }
 }
 
@@ -87,7 +88,7 @@ bool Type::compatible(const Type &other) {
 bool Type::operator==(const Type &other) const {
     if (typeClass != other.typeClass) return false;
     switch(typeClass) {
-        case Null: return true;
+        case Undefined: return true;
         case Primitive: return primitive == other.primitive;
         case Array: return returnType->compatible(*(other.returnType));
         case Callable:
