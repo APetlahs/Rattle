@@ -242,7 +242,7 @@ typed_var:
 
 type:
     IDENT                               { $$ = new TypeNode(*$1); delete $1; }
-    //| '[' type ']' /* lists */
+    | '[' type ']'                      { $$ = new TypeNode($2); }
     //| '(' type_list ')' RARROW type
     //| '(' ')' RARROW type
     ;

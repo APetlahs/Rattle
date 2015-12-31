@@ -12,11 +12,16 @@ Type::Type(const enum Primitive type):
 Type::Type(ast::TypeNode *type):
     typeClass(Primitive), returnType(NULL), params()
 {
-    if (type->id == "int") primitive = Int;
-    else if (type->id == "float") primitive = Float;
-    else if (type->id == "str") primitive = Str;
-    else if (type->id == "bool") primitive = Bool;
-    // TODO: else throw something
+    if (type->subType != NULL) {
+        typeClass = Array;
+        returnType = new Type(type->subType);
+    } else {
+        if (type->id == "int") primitive = Int;
+        else if (type->id == "float") primitive = Float;
+        else if (type->id == "str") primitive = Str;
+        else if (type->id == "bool") primitive = Bool;
+        // TODO: else throw something
+    }
 }
 
 Type::Type(ast::FuncDefNode *func):

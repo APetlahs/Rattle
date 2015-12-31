@@ -59,7 +59,9 @@ public:
 class TypeNode: public ASTNode {
 public:
     std::string id;
-    TypeNode(std::string id): id(id) {}
+    TypeNode *subType;
+    TypeNode(std::string id): id(id), subType(NULL) {}
+    TypeNode(TypeNode* type): id(), subType(type) {}
     ACCEPT();
 };
 
