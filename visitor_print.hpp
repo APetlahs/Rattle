@@ -18,6 +18,7 @@ public:
 
     virtual void visit(ast::IntNode *node);
     virtual void visit(ast::FloatNode *node);
+    virtual void visit(ast::ArrayNode *node);
     virtual void visit(ast::IdNode *node);
     virtual void visit(ast::TypeNode *node);
     virtual void visit(ast::TypedIdNode *node);

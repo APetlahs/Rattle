@@ -1,0 +1,5 @@
+var x : int = 5;
+var y : [int] = [];
+
+y = x;
+x = y;

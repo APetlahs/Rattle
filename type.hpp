@@ -13,7 +13,7 @@ class FuncDefNode;
 
 namespace visitor {
 
-enum TypeClass { Undefined, Primitive, Array, Callable };
+enum TypeClass { Undefined, Primitive, Array, EmptyArray, Callable };
 enum Primitive { Null, Int, Float, Str, Bool };
 
 class Type {

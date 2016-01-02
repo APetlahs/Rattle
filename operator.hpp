@@ -12,7 +12,8 @@ class Type;
 
 enum Operator { ADD,SUB,MUL,DIV,POW,
                 MOD,AND,OR,NOT,LT,
-                GT,LTE,GTE,EQ,NEQ };
+                GT,LTE,GTE,EQ,NEQ,
+                ACCESS };
 
 class CastMap {
 public:

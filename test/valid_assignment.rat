@@ -1,0 +1,5 @@
+var x : int = 5;
+var z : int = 7;
+x = z;
+
+var y : float = x;

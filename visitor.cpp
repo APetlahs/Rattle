@@ -104,6 +104,14 @@ void Visitor::visit(ast::CallNode *node) {
     VISIT(node->args);
 }
 
+void Visitor::visit(ast::ArrayNode *node) {
+    for (std::vector<ExprNode*>::iterator i = node->args.begin();
+         i != node->args.end(); ++i)
+    {
+        VISIT((*i));
+    }
+}
+
 void Visitor::visit(ast::FuncDefNode *node) {
     VISIT(node->args);
     VISIT(node->type);
@@ -116,6 +124,7 @@ void Visitor::visit(ast::VarDefNode *node) {
 }
 
 void Visitor::visit(ast::AssignNode *node) {
+    VISIT(node->id);
     VISIT(node->expr);
 }
 

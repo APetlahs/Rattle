@@ -1,0 +1,9 @@
+var x : int = 5;
+var y : [int] = [];
+
+func foo() -> [int] { return [1,2,3]; }
+
+foo() = [];
+foo = x;
+foo = y;
+

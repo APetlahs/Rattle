@@ -20,6 +20,7 @@ public:
         inFunction(false), error(false) {}
     virtual void visit(ast::IdNode *node);
     virtual void visit(ast::CallNode *node);
+    virtual void visit(ast::ArrayNode *node);
     virtual void visit(ast::VarDefNode *node);
     virtual void visit(ast::FuncDefNode *node);
     virtual void visit(ast::AssignNode *node);
