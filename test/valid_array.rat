@@ -1,0 +1,10 @@
+var x : int = 1;
+var z : float = 2;
+
+
+var arr1: [int] = [];
+var arr2: [int] = [1,2,3];
+var arr3: [int] = [x,x,2];
+var arr4: [[int]] = [[1,2,3],[x]];
+var arr5: [[int]] = [];
+var arr6: [[float]] = [[x,z],[1,1.1]];

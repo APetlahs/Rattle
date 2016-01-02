@@ -1,0 +1,5 @@
+func foo()->[int] {
+  return [1,2,3];
+}
+
+foo()[0] = 4;

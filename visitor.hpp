@@ -25,6 +25,7 @@ namespace ast {
     class ParamsNode;
     class ArgsNode;
     class CallNode;
+    class ArrayNode;
     class FuncDefNode;
     class VarDefNode;
     class AssignNode;
@@ -60,6 +61,7 @@ public:
     virtual void visit(ast::ParamsNode *node);
     virtual void visit(ast::ArgsNode *node);
     virtual void visit(ast::CallNode *node);
+    virtual void visit(ast::ArrayNode *node);
     virtual void visit(ast::FuncDefNode *node);
     virtual void visit(ast::VarDefNode *node);
     virtual void visit(ast::AssignNode *node);

@@ -30,6 +30,12 @@ void PrintVisitor::visit(ast::FloatNode *node) {
     VISIT(node);
 }
 
+void PrintVisitor::visit(ast::ArrayNode *node) {
+    std::cout << prefix << "ArrayNode: " << node << std::endl;
+    std::cout << prefix << node->type->toStr() << std::endl;
+    VISIT(node);
+}
+
 void PrintVisitor::visit(ast::IdNode *node) {
     std::cout << prefix << "IdNode: " << node << std::endl;
     std::cout << prefix << node->id << std::endl;

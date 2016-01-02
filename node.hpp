@@ -59,7 +59,9 @@ public:
 class TypeNode: public ASTNode {
 public:
     std::string id;
-    TypeNode(std::string id): id(id) {}
+    TypeNode *subType;
+    TypeNode(std::string id): id(id), subType(NULL) {}
+    TypeNode(TypeNode* type): id(), subType(type) {}
     ACCEPT();
 };
 
@@ -202,6 +204,14 @@ public:
     ACCEPT();
 };
 
+class ArrayNode: public ExprNode {
+public:
+    std::vector<ExprNode*> args;
+    ArrayNode(ArgsNode *args): args(args->args) {}
+    virtual void deleteAll();
+    ACCEPT();
+};
+
 class CallNode: public ExprNode {
 public:
     std::string id;
@@ -243,12 +253,13 @@ public:
 
 class AssignNode: public ASTNode {
 public:
-    std::string id;
+    ExprNode *id;
     ExprNode *expr;
-    visitor::Type *type; // TODO: should replace strng id with id node
-
-    AssignNode(std::string id, ExprNode *expr): id(id), expr(expr) {}
-    virtual void deleteAll();
+    AssignNode(ExprNode* id, ExprNode *expr): id(id), expr(expr) {}
+    virtual void deleteAll() {
+        id->deleteAll();
+        expr->deleteAll();
+    }
     ACCEPT();
 };
 
