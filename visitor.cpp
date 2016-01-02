@@ -122,6 +122,7 @@ void Visitor::visit(ast::VarDefNode *node) {
 }
 
 void Visitor::visit(ast::AssignNode *node) {
+    VISIT(node->id);
     VISIT(node->expr);
 }
 

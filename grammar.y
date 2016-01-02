@@ -65,8 +65,8 @@
 %type <ifblock> if_elif_else
 %type <ifnode> if_block
 %type <elifnode> elif_blocks
-%type <expr> expr terminal uni_expr bin_expr array_expr
-%type <call> func_call
+%type <expr> expr literal_expr uni_expr bin_expr simple_expr lhs_expression array_access_expr
+%type <call> func_call_expr
 %type <params> parameter_list parameter_loop
 %type <args> args_list args_loop
 %type <op> bin_operator uni_operator
@@ -119,10 +119,6 @@ definition:
     | VAR typed_var '=' expr    { $$ = new VarDefNode($2,$4); }
     ;
 
-assignment:
-    IDENT '=' expr          { $$ = new AssignNode(*$1,$3); delete $1;}
-    ;
-
 func_def:
     FUNC IDENT '(' parameter_list ')' RARROW type
         code_block
@@ -166,13 +162,31 @@ else_block:
     |                       { $$ = NULL; }
     ;
 
+assignment:
+    lhs_expression '=' expr     { $$ = new AssignNode($1,$3); }
+    ;
+
 expr:
-    terminal                { $$ = $1; }
-    | func_call             { $$ = $1; }
-    | array_expr            { $$ = $1; }
-    | '(' expr ')'          { $$ = $2; }
+    simple_expr             { $$ = $1; }
     | uni_expr              { $$ = $1; }
     | bin_expr              { $$ = $1; }
+    ;
+
+lhs_expression:
+    IDENT                   { $$ = new IdNode(*$1); delete $1; }
+    | array_access_expr     { $$ = $1; }
+  //| dotted_name
+    ;
+
+array_access_expr:
+    simple_expr '[' expr ']'    { $$ = new BinExprNode($1, rattle::ACCESS, $3); }
+    ;
+
+simple_expr:
+    literal_expr            { $$ = $1; }
+    | func_call_expr        { $$ = $1; }
+    | array_access_expr     { $$ = $1; }
+    | '(' expr ')'          { $$ = $2; }
     ;
 
 uni_expr:
@@ -185,11 +199,7 @@ bin_expr:
     %prec BINARY            { $$ = new BinExprNode($1,$2,$3); }
     ;
 
-array_expr:
-    '[' args_list ']'       { $$ = new ArrayNode($2); }
-    ;
-
-func_call:
+func_call_expr:
     IDENT '(' args_list ')' { $$ = new CallNode(*$1,$3); delete $1; }
     ;
 
@@ -236,10 +246,11 @@ uni_operator:
     | '-'                   { $$ = rattle::SUB; }
     ;
 
-terminal:
+literal_expr:
     IDENT                   { $$ = new IdNode(*$1); delete $1; }
     | INT                   { $$ = new IntNode($1); }
     | FLOAT                 { $$ = new FloatNode($1); }
+    | '[' args_list ']'     { $$ = new ArrayNode($2); }
     ;
 
 typed_var:

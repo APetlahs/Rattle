@@ -77,8 +77,9 @@ void TypeCheckVisitor::visit(ast::VarDefNode *node) {
 }
 
 void TypeCheckVisitor::visit(ast::AssignNode *node) {
-    Type *t1 = node->type;
-    Visitor::visit(node);
+    Visitor::visit(node->id);
+    Type *t1 = curType;
+    Visitor::visit(node->expr);
     Type *t2 = curType;
     if (!t1->compatible(*t2)) {
         error = true;

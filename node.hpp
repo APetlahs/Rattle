@@ -49,7 +49,6 @@ public:
     ACCEPT();
 };
 
-
 class IdNode: public ExprNode {
 public:
     std::string id;
@@ -254,12 +253,13 @@ public:
 
 class AssignNode: public ASTNode {
 public:
-    std::string id;
+    ExprNode *id;
     ExprNode *expr;
-    visitor::Type *type; // TODO: should replace strng id with id node
-
-    AssignNode(std::string id, ExprNode *expr): id(id), expr(expr) {}
-    virtual void deleteAll();
+    AssignNode(ExprNode* id, ExprNode *expr): id(id), expr(expr) {}
+    virtual void deleteAll() {
+        id->deleteAll();
+        expr->deleteAll();
+    }
     ACCEPT();
 };
 

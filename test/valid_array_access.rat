@@ -1,0 +1,6 @@
+func getItem(index:int, arr:[int])->int
+{
+  return arr[index];
+}
+
+var x : int = getItem(0,[1,2,3]);

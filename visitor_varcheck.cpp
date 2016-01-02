@@ -95,17 +95,6 @@ void CheckVisitor::visit(ast::CallNode *node) {
     Visitor::visit(node);
 }
 
-void CheckVisitor::visit(ast::AssignNode *node) {
-    if (!wasDefined(node->id)) {
-        node->type = new Type();
-        error = true;
-        std::cerr << "variable " << node->id << " undeclared" << std::endl;
-    } else {
-        node->type = new Type(getSymbol(node->id).type);
-    }
-    Visitor::visit(node);
-}
-
 void CheckVisitor::visit(ast::IntNode *node) {
     node->type = new Type(Int);
 }

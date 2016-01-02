@@ -17,6 +17,10 @@ static bool isCmp(Operator op) {
          ||(op==GTE)||(op==EQ)||(op==NEQ);
 }
 
+static bool isArray(Operator op) {
+    return op == ACCESS;
+}
+
 static Type castBinMath(const Operator op, const Type &t1, const Type &t2) {
     if (t1.typeClass == t2.typeClass) {
         if (t1.primitive == Int && t2.primitive == Int) return Type(Int);
@@ -39,6 +43,15 @@ static Type castBinCmp(const Operator op, const Type &t1, const Type &t2) {
     return Type(Bool);
 }
 
+static Type castArrayAccess(const Operator op, const Type &t1, const Type &t2) {
+    if (t1.typeClass == Array || t1.typeClass == EmptyArray) {
+        if (t2.typeClass == Primitive && t2.primitive == Int) {
+            return Type(*(t1.returnType));
+        }
+    }
+    return Type();
+}
+
 bool CastMap::compatible(const Operator op, const Type &t1, const Type &t2) {
     Type null_type = Type();
     return cast(op,t1,t2) != null_type;
@@ -53,6 +66,7 @@ Type CastMap::cast(const Operator op, const Type &t1, const Type &t2) {
     if (isMath(op)) return castBinMath(op,t1,t2);
     if (isLogic(op)) return castBinLogic(op,t1,t2);
     if (isCmp(op)) return castBinCmp(op,t1,t2);
+    if (isArray(op)) return castArrayAccess(op,t1,t2);
     // TODO : throw something
     return Type();
 }

@@ -35,8 +35,3 @@ void ArrayNode::deleteAll() {
         (*i)->deleteAll();
     }
 }
-
-void AssignNode::deleteAll() {
-    expr->deleteAll();
-    delete type;
-}
