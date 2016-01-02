@@ -18,6 +18,7 @@
     rattle::ast::IdNode *id;
     rattle::ast::IntNode *inode;
     rattle::ast::FloatNode *fnode;
+    rattle::ast::ArrayNode *arrnode;
     rattle::ast::ExprNode *expr;
     rattle::ast::TypeNode *type;
     rattle::ast::TypedIdNode *typedId;
@@ -64,7 +65,7 @@
 %type <ifblock> if_elif_else
 %type <ifnode> if_block
 %type <elifnode> elif_blocks
-%type <expr> expr terminal uni_expr bin_expr
+%type <expr> expr terminal uni_expr bin_expr array_expr
 %type <call> func_call
 %type <params> parameter_list parameter_loop
 %type <args> args_list args_loop
@@ -168,6 +169,7 @@ else_block:
 expr:
     terminal                { $$ = $1; }
     | func_call             { $$ = $1; }
+    | array_expr            { $$ = $1; }
     | '(' expr ')'          { $$ = $2; }
     | uni_expr              { $$ = $1; }
     | bin_expr              { $$ = $1; }
@@ -181,6 +183,10 @@ uni_expr:
 bin_expr:
     expr bin_operator expr
     %prec BINARY            { $$ = new BinExprNode($1,$2,$3); }
+    ;
+
+array_expr:
+    '[' args_list ']'       { $$ = new ArrayNode($2); }
     ;
 
 func_call:

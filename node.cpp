@@ -30,6 +30,12 @@ void ArgsNode::deleteAll() {
     }
 }
 
+void ArrayNode::deleteAll() {
+    for (vector<ExprNode*>::iterator i = args.begin(); i != args.end(); ++i) {
+        (*i)->deleteAll();
+    }
+}
+
 void AssignNode::deleteAll() {
     expr->deleteAll();
     delete type;

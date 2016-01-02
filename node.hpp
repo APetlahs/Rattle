@@ -49,6 +49,7 @@ public:
     ACCEPT();
 };
 
+
 class IdNode: public ExprNode {
 public:
     std::string id;
@@ -200,6 +201,14 @@ public:
     std::vector<ExprNode*> args;
     ArgsNode(): args() {}
     void push(ExprNode *node) { args.push_back(node); }
+    virtual void deleteAll();
+    ACCEPT();
+};
+
+class ArrayNode: public ExprNode {
+public:
+    std::vector<ExprNode*> args;
+    ArrayNode(ArgsNode *args): args(args->args) {}
     virtual void deleteAll();
     ACCEPT();
 };

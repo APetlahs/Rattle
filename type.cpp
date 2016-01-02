@@ -48,32 +48,36 @@ Type::~Type() {
 
 std::string Type::toStr() {
     std::stringstream ss;
-    if (typeClass == Primitive) {
-        switch(primitive) {
-            case Null: return "null";
-            case Int: return "int";
-            case Float: return "float";
-            case Str: return "str";
-            case Bool: return "bool";
-            default: return "unknown type"; // TODO: raise something
-        }
-    } else if (typeClass == Array) {
-        ss << "Array[" << returnType->toStr() << "]";
-        return ss.str();
-    } else if (typeClass == Callable) {
-        ss << "Callable(";
-        for (std::vector<Type>::iterator i = params.begin();
-             i != params.end(); ++i)
-        {
-            ss << (*i).toStr();
-            if (i+1 != params.end()) ss << ",";
-        }
-        ss << ")->" << returnType->toStr();
-        return ss.str();
-    } else if (typeClass == Undefined) {
-        return "Undefined";
-    } else {
-        return "Unknown Type!"; // TODO: raise something
+    switch (typeClass) {
+        case Primitive:
+            switch(primitive) {
+                case Null: return "null";
+                case Int: return "int";
+                case Float: return "float";
+                case Str: return "str";
+                case Bool: return "bool";
+                default: return "unknown type"; // TODO: raise something
+            }
+        case Array:
+            ss << "Array[" << returnType->toStr() << "]";
+            return ss.str();
+        case EmptyArray:
+            ss << "Array[]";
+            return ss.str();
+        case Callable:
+            ss << "Callable(";
+            for (std::vector<Type>::iterator i = params.begin();
+                 i != params.end(); ++i)
+            {
+                ss << (*i).toStr();
+                if (i+1 != params.end()) ss << ",";
+            }
+            ss << ")->" << returnType->toStr();
+            return ss.str();
+        case Undefined:
+            return "Undefined";
+        default:
+            return "UnimplementedType"; // TODO: raise something
     }
 }
 
@@ -87,7 +91,45 @@ Type &Type::operator=(const Type &other) {
 }
 
 bool Type::compatible(const Type &other) {
-    return *this == other;
+    if (typeClass == Undefined || other.typeClass == Undefined)
+        return false;
+
+    if (*this == other)
+        return true;
+
+    if ((typeClass == Array && other.typeClass == EmptyArray)
+    ||  (typeClass == EmptyArray && other.typeClass == Array)
+    ||  (typeClass == EmptyArray && other.typeClass == EmptyArray))
+        return true;
+
+    if (typeClass != other.typeClass)
+        return false;
+
+    if (typeClass == Primitive) {
+        switch(primitive) {
+            case Float: return other.primitive == Int || other.primitive == Float;
+            default: return primitive == other.primitive;
+        }
+    }
+
+    if (typeClass == Array) {
+        if (returnType == NULL || other.returnType == NULL) {
+            // this is an empty array, compatible with other arrays
+            return true;
+        } else {
+            return returnType->compatible(*(other.returnType));
+        }
+    }
+    if (typeClass == Callable) {
+        if (!returnType->compatible((*other.returnType))) return false;
+        if (params.size() != other.params.size()) return false;
+        for (unsigned int i = params.size(); i-- > 0;) {
+            Type t = params[i];
+            if (!t.compatible(other.params[i])) return false;
+        }
+        return true;
+    }
+    return false;
 }
 
 bool Type::operator==(const Type &other) const {

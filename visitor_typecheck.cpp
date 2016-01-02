@@ -28,6 +28,33 @@ void TypeCheckVisitor::visit(ast::CallNode *node) {
     curType = node->type->returnType;
 }
 
+void TypeCheckVisitor::visit(ast::ArrayNode *node) {
+    Type *prevType = NULL;
+    if (node->args.size() < 1) {
+        curType = new Type();
+        curType->typeClass = EmptyArray;
+    } else {
+        for (std::vector<ast::ExprNode*>::iterator i = node->args.begin(); i != node->args.end(); ++i)
+        {
+            Visitor::visit(*i);
+            if (prevType == NULL) {
+                prevType = curType;
+            }
+            if (!(prevType->compatible(*curType)
+            || curType->compatible(*prevType))) {
+                error = true;
+                std::cerr << "Type error: array contents must contain compatible type."
+                          << std::endl;
+                break;
+            }
+        }
+        curType = new Type();
+        curType->typeClass = Array;
+        curType->returnType = prevType;
+    }
+    node->type = curType;
+}
+
 void TypeCheckVisitor::visit(ast::VarDefNode *node) {
     Type *t1 = new Type(node->typedId->type);
     Visitor::visit(node->expr);
