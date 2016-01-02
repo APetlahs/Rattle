@@ -40,8 +40,11 @@ void TypeCheckVisitor::visit(ast::ArrayNode *node) {
             if (prevType == NULL) {
                 prevType = curType;
             }
-            if (!(prevType->compatible(*curType)
-            || curType->compatible(*prevType))) {
+            if (!prevType->compatible(*curType)) {
+                if (curType->compatible(*prevType)) {
+                    prevType = curType;
+                    continue;
+                }
                 error = true;
                 std::cerr << "Type error: array contents must contain compatible type."
                           << std::endl;
