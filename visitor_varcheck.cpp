@@ -102,3 +102,7 @@ void CheckVisitor::visit(ast::IntNode *node) {
 void CheckVisitor::visit(ast::FloatNode *node) {
     node->type = new Type(Float);
 }
+
+void CheckVisitor::visit(ast::StringNode *node) {
+    node->type = new Type(Str);
+}

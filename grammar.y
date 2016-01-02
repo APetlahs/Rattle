@@ -45,12 +45,12 @@
     long ival;
 }
 
-%token CONST VAR FUNC END RETURN
+%token CONST VAR FUNC RETURN
 %token FOR WHILE IN IF ELIF ELSE
 %token RARROW LARROW EQ GTE LTE NEQ
 %token END_OF_FILE
 
-%token <str> IDENT
+%token <str> IDENT STRING
 %token <ival> INT
 %token <fval> FLOAT
 
@@ -250,6 +250,7 @@ literal_expr:
     IDENT                   { $$ = new IdNode(*$1); delete $1; }
     | INT                   { $$ = new IntNode($1); }
     | FLOAT                 { $$ = new FloatNode($1); }
+    | STRING                { $$ = new StringNode(*$1); delete $1; }
     | '[' args_list ']'     { $$ = new ArrayNode($2); }
     ;
 

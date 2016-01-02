@@ -16,6 +16,8 @@ void Visitor::visit(ast::IntNode *node) {}
 
 void Visitor::visit(ast::FloatNode *node) {}
 
+void Visitor::visit(ast::StringNode *node) {}
+
 void Visitor::visit(ast::IdNode *node) {}
 
 void Visitor::visit(ast::TypeNode *node) {}

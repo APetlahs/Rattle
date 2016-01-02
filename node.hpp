@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <iostream>
 #include "operator.hpp"
 #include "visitor.hpp"
 
@@ -53,6 +54,13 @@ class IdNode: public ExprNode {
 public:
     std::string id;
     IdNode(std::string id): id(id) {}
+    ACCEPT();
+};
+
+class StringNode: public ExprNode {
+public:
+    std::string val;
+    StringNode(std::string val): val(val) {} 
     ACCEPT();
 };
 

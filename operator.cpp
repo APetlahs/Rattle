@@ -48,6 +48,10 @@ static Type castAccessor(const Operator op, const Type &t1, const Type &t2) {
         if (t2.typeClass == Primitive && t2.primitive == Int) {
             return Type(*(t1.returnType));
         }
+    } if (t1.typeClass == Primitive && t1.primitive == Str) {
+        if (t2.typeClass == Primitive && t2.primitive == Int) {
+            return Type(Str);
+        }
     }
     return Type();
 }
