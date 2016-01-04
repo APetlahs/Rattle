@@ -144,9 +144,11 @@ void TypeCheckVisitor::visit(ast::UniExprNode *node) {
 void TypeCheckVisitor::visit(ast::FuncDefNode *node) {
     bool prevFunctionStatus = inFunction;
     inFunction = true;
+    Type *prevReturnType = returnType;
     returnType = new Type(node->type);
     Visitor::visit(node->body);
     delete returnType;
+    returnType = prevReturnType;
     inFunction = prevFunctionStatus;
 }
 
