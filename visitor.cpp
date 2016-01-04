@@ -22,6 +22,14 @@ void Visitor::visit(ast::IdNode *node) {}
 
 void Visitor::visit(ast::TypeNode *node) {}
 
+void Visitor::visit(ast::TypeListNode *node) {
+    for (std::vector<TypeNode*>::iterator i = node->types.begin();
+         i != node->types.end(); ++i)
+    {
+        VISIT((*i));
+    }
+}
+
 void Visitor::visit(ast::ExprNode *node) {
     VISIT(node);
 }

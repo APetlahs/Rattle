@@ -12,6 +12,7 @@ namespace ast {
     class StringNode;
     class IdNode;
     class TypeNode;
+    class TypeListNode;
     class TypedIdNode;
     class BinExprNode;
     class UniExprNode;
@@ -49,6 +50,7 @@ public:
     virtual void visit(ast::StringNode *node);
     virtual void visit(ast::IdNode *node);
     virtual void visit(ast::TypeNode *node);
+    virtual void visit(ast::TypeListNode *node);
     virtual void visit(ast::TypedIdNode *node);
     virtual void visit(ast::BinExprNode *node);
     virtual void visit(ast::UniExprNode *node);

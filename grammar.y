@@ -21,6 +21,7 @@
     rattle::ast::ArrayNode *arrnode;
     rattle::ast::ExprNode *expr;
     rattle::ast::TypeNode *type;
+    rattle::ast::TypeListNode *typelist;
     rattle::ast::TypedIdNode *typedId;
     rattle::ast::BinExprNode *binexp;
     rattle::ast::UniExprNode *uniexp;
@@ -72,6 +73,7 @@
 %type <op> bin_operator uni_operator
 %type <typedId> typed_var
 %type <type> type
+%type <typelist> type_list
 
 %left '&' '|' '~'
 %left '!' GTE LTE NEQ EQ '>' '<'
@@ -261,13 +263,14 @@ typed_var:
 type:
     IDENT                               { $$ = new TypeNode(*$1); delete $1; }
     | '[' type ']'                      { $$ = new TypeNode($2); }
-    //| '(' type_list ')' RARROW type
-    //| '(' ')' RARROW type
+    | '(' type_list ')' RARROW type     { $$ = new TypeNode($2, $5); }
+    | '(' ')' RARROW type               { $$ = new TypeNode(new TypeListNode(), $4); }
     ;
 
-//type_list:
-//    type
-//    | type_list ',' type
+type_list:
+    type                    { $$ = new TypeListNode(); $$->push($1); }
+    | type_list ',' type    { $$ = $1; $$->push($3); }
+    ;
 
 end_stmt:
     ';'

@@ -12,7 +12,15 @@ Type::Type(const enum Primitive type):
 Type::Type(ast::TypeNode *type):
     typeClass(Primitive), returnType(NULL), params()
 {
-    if (type->subType != NULL) {
+    if (type->callable) {
+        typeClass = Callable;
+        returnType = new Type(type->subType);
+        for (std::vector<ast::TypeNode*>::iterator i = type->params->types.begin();
+            i != type->params->types.end(); ++i)
+        {
+            params.push_back(*i);
+        }
+    } else if (type->subType != NULL) {
         typeClass = Array;
         returnType = new Type(type->subType);
     } else {

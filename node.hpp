@@ -60,16 +60,33 @@ public:
 class StringNode: public ExprNode {
 public:
     std::string val;
-    StringNode(std::string val): val(val) {} 
+    StringNode(std::string val): val(val) {}
     ACCEPT();
 };
+
+// forward declaration
+class TypeListNode;
 
 class TypeNode: public ASTNode {
 public:
     std::string id;
     TypeNode *subType;
-    TypeNode(std::string id): id(id), subType(NULL) {}
-    TypeNode(TypeNode* type): id(), subType(type) {}
+    TypeListNode *params;
+    bool callable;
+    TypeNode(std::string id):
+        id(id), subType(NULL), params(NULL), callable(false) {}
+    TypeNode(TypeNode* type):
+        id(), subType(type), params(NULL), callable(false) {}
+    TypeNode(TypeListNode *params, TypeNode *rtype):
+        id(), subType(rtype), params(params), callable(true) {}
+    ACCEPT();
+};
+
+class TypeListNode: public ASTNode {
+public:
+    std::vector<TypeNode*> types;
+    TypeListNode(): types() {}
+    void push(TypeNode *type) { types.push_back(type); }
     ACCEPT();
 };
 
