@@ -1,0 +1,6 @@
+func foo(x:int)->int {
+  return 1 + x;
+}
+
+var someFunc : (int)->int = foo;
+var sameFunc : (int)->int = someFunc;

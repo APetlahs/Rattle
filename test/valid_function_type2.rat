@@ -1,0 +1,6 @@
+func makeAdder(x:int)-> (int)->int {
+  func adder(y:int)-> int { return x + y; }
+  return adder;
+}
+
+var adder : (int)->int = makeAdder(1);
