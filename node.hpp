@@ -217,6 +217,7 @@ public:
         cond->deleteAll();
         body->deleteAll();
     }
+    ACCEPT();
 };
 
 class ParamsNode: public ASTNode {

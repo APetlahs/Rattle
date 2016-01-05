@@ -97,6 +97,10 @@ void TypeCheckVisitor::visit(ast::FloatNode *node) {
     curType = node->type;
 }
 
+void TypeCheckVisitor::visit(ast::BoolNode *node) {
+    curType = node->type;
+}
+
 void TypeCheckVisitor::visit(ast::StringNode *node) {
     curType = node->type;
 }
@@ -185,6 +189,17 @@ void TypeCheckVisitor::visit(ast::ForNode *node) {
         std::cerr << "identifer '" << node->var->id << "' with type "
                   << var.toStr() << " is not compatible" << std::endl;
         return;
+    }
+    Visitor::visit(node->body);
+}
+
+void TypeCheckVisitor::visit(ast::WhileNode *node) {
+    Visitor::visit(node->cond);
+    Type t = Type(Bool);
+    if (!t.compatible(*curType)) {
+        error = true;
+        std::cerr << "While-loop conditions must be a boolean. Got "
+                  << curType->toStr() << " instead." << std::endl;
     }
     Visitor::visit(node->body);
 }
