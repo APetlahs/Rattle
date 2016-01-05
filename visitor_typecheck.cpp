@@ -19,7 +19,7 @@ void TypeCheckVisitor::visit(ast::CallNode *node) {
     } else {
         for(unsigned int i = 0; i < args.size(); ++i) {
             Visitor::visit(args[i]);
-            if (!curType->compatible(node->type->params[i])) {
+            if (!node->type->params[i].compatible(*curType)) {
                 error = true;
                 std::cerr << "incompatible argument type" << std::endl;
             }
