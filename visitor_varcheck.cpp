@@ -43,10 +43,10 @@ void CheckVisitor::visit(ast::VarDefNode *node) {
         error = true;
         std::cerr << "variable " << node->typedId->id << " previously defined" << std::endl;
     } else {
+        Visitor::visit(node);
         Symbol s = Symbol(node->typedId->id, Type(node->typedId->type));
         sym.add(s);
     }
-    Visitor::visit(node);
 }
 
 void CheckVisitor::visit(ast::IdNode *node) {
