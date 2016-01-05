@@ -165,3 +165,26 @@ void TypeCheckVisitor::visit(ast::ReturnNode *node) {
         return;
     }
 }
+
+void TypeCheckVisitor::visit(ast::ForNode *node) {
+    Type var = Type(node->var->type);
+    Visitor::visit(node->cond);
+    Type *expr = curType;
+    if (!expr->isIterable()) {
+        std::cerr << expr->toStr() << " is not iterable." << std::endl;
+        return;
+    }
+    if (expr->typeClass == EmptyArray) {
+        delete expr;
+        expr = new Type();
+        expr->typeClass = Array;
+        expr->returnType = new Type(var);
+    }
+    if (!var.compatible(expr->getIterator())) {
+        error = true;
+        std::cerr << "identifer '" << node->var->id << "' with type "
+                  << var.toStr() << " is not compatible" << std::endl;
+        return;
+    }
+    Visitor::visit(node->body);
+}

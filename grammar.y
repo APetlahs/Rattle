@@ -134,9 +134,9 @@ while_loop:
     ;
 
 for_loop:
-    FOR IDENT IN expr
+    FOR typed_var IN expr
         code_block
-                            { $$ = new ForNode(*$2,$4,$5); delete $2; }
+                            { $$ = new ForNode($2,$4,$5); }
     ;
 
 if_elif_else:

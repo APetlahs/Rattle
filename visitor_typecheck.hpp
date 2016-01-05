@@ -30,6 +30,7 @@ public:
     virtual void visit(ast::BinExprNode *node);
     virtual void visit(ast::UniExprNode *node);
     virtual void visit(ast::ReturnNode *node);
+    virtual void visit(ast::ForNode *node);
 };
 
 } // namespace rattle

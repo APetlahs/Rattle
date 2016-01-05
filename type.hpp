@@ -35,6 +35,8 @@ public:
     Type &operator=(const Type &other);
     bool operator==(const Type &other) const;
     bool operator!=(const Type &other) const;
+    bool isIterable() const;
+    Type getIterator() const;
 };
 
 } // namespace visitor

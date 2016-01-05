@@ -161,3 +161,22 @@ bool Type::operator==(const Type &other) const {
 bool Type::operator!=(const Type &other) const {
     return !(*this == other);
 }
+
+bool Type::isIterable() const {
+    switch (typeClass) {
+        case Array: return true;
+        case EmptyArray: return true;
+        case Primitive:
+            switch (primitive) {
+                case Str: return true;
+                default: return false;
+            }
+        default: return false;
+    }
+}
+
+Type Type::getIterator() const {
+    if (typeClass == Array) return *returnType;
+    if (typeClass == Primitive && primitive == Str) return Type(Str);
+    return Type();
+}

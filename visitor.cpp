@@ -85,6 +85,7 @@ void Visitor::visit(ast::IfBlock *node) {
 }
 
 void Visitor::visit(ast::ForNode *node) {
+    VISIT(node->var);
     VISIT(node->cond);
     VISIT(node->body);
 }

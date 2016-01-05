@@ -1,0 +1,10 @@
+for i : int in [1,2,3] {
+  i + 1.1;
+}
+
+for i : str in "hello world!" {
+}
+
+for i:float in [] {
+}
+

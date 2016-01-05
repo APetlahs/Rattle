@@ -60,7 +60,12 @@ void CheckVisitor::visit(ast::IdNode *node) {
 }
 
 void CheckVisitor::visit(ast::ForNode *node) {
+    globalSymStack.push_back(sym);
+    Symbol s = Symbol(node->var->id, Type(node->var->type));
+    sym.add(s);
     Visitor::visit(node);
+    sym = globalSymStack.back();
+    globalSymStack.pop_back();
 }
 
 void CheckVisitor::visit(ast::FuncDefNode *node) {

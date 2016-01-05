@@ -194,12 +194,13 @@ public:
 
 class ForNode: public ASTNode {
 public:
-    std::string var;
+    TypedIdNode *var;
     ExprNode *cond;
     BlockNode *body;
-    ForNode(std::string var, ExprNode *cond, BlockNode *body):
+    ForNode(TypedIdNode *var, ExprNode *cond, BlockNode *body):
         var(var), cond(cond), body(body) {}
     virtual void deleteAll() {
+        var->deleteAll();
         cond->deleteAll();
         body->deleteAll();
     }
