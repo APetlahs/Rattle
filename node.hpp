@@ -57,6 +57,13 @@ public:
     ACCEPT();
 };
 
+class BoolNode: public ExprNode {
+public:
+    bool val;
+    BoolNode(const bool val): val(val) {}
+    ACCEPT();
+};
+
 class StringNode: public ExprNode {
 public:
     std::string val;

@@ -1,0 +1,7 @@
+func foo(x:int,y:int)->bool {
+  return x == y;
+}
+
+var x : bool = foo(1,2);
+var y : bool = x and False;
+var z : bool = True or False;

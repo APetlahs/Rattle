@@ -31,6 +31,11 @@ extern void yyerror(const char *s);
 "if"                    return IF;
 "elif"                  return ELIF;
 "else"                  return ELSE;
+"and"                   return AND;
+"or"                    return OR;
+"not"                   return NOT;
+"True"                  return TRUE;
+"False"                 return FALSE;
 [a-zA-Z_][a-zA-Z_0-9]*  { SAVE_TOKEN; return IDENT; }
 [0-9]+[.][0-9]+         { yylval.fval = atof(yytext); return FLOAT; }
 [0-9]+                  { yylval.ival = atoi(yytext); return INT; }

@@ -40,7 +40,14 @@ static Type castBinLogic(const Operator op, const Type &t1, const Type &t2) {
 }
 
 static Type castBinCmp(const Operator op, const Type &t1, const Type &t2) {
-    return Type(Bool);
+    if (t1.typeClass == t2.typeClass && t1.typeClass == Primitive) {
+        if ((t1.primitive == Int && t2.primitive == Int)
+            || (t1.primitive == Int && t2.primitive == Float)
+            || (t1.primitive == Float && t2.primitive == Int)
+            || (t1.primitive == Float && t2.primitive == Float))
+        return Type(Bool);
+    }
+    return Type();
 }
 
 static Type castAccessor(const Operator op, const Type &t1, const Type &t2) {
@@ -67,6 +74,7 @@ bool CastMap::compatible(const Operator op, const Type &t) {
 }
 
 Type CastMap::cast(const Operator op, const Type &t1, const Type &t2) {
+    if (t1.typeClass == Undefined || t2.typeClass == Undefined) return Type();
     if (isMath(op)) return castBinMath(op,t1,t2);
     if (isLogic(op)) return castBinLogic(op,t1,t2);
     if (isCmp(op)) return castBinCmp(op,t1,t2);
@@ -76,6 +84,18 @@ Type CastMap::cast(const Operator op, const Type &t1, const Type &t2) {
 }
 
 Type CastMap::cast(const Operator op, const Type &t) {
+    if (isMath(op)) {
+        if (t.typeClass == Primitive) {
+            switch (t.primitive) {
+                case Int: return Type(Int);
+                case Float: return Type(Float);
+                default: return Type();
+            }
+        }
+    } else if (isLogic(op)) {
+        if (t.typeClass == Primitive && t.primitive == Bool) {
+            return Type(Bool);
+        }
+    }
     return Type();
-    // TODO: throw something
 }

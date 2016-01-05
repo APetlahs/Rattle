@@ -49,7 +49,7 @@
 %token CONST VAR FUNC RETURN
 %token FOR WHILE IN IF ELIF ELSE
 %token RARROW LARROW EQ GTE LTE NEQ
-%token END_OF_FILE
+%token TRUE FALSE END_OF_FILE
 
 %token <str> IDENT STRING
 %token <ival> INT
@@ -75,7 +75,7 @@
 %type <type> type
 %type <typelist> type_list
 
-%left '&' '|' '~'
+%left AND OR NOT
 %left '!' GTE LTE NEQ EQ '>' '<'
 %left '+' '-'
 %left '*' '/' '%'
@@ -230,8 +230,8 @@ bin_operator:
     | GTE                   { $$ = rattle::GTE; }
     | LTE                   { $$ = rattle::LTE; }
     | NEQ                   { $$ = rattle::NEQ; }
-    | '&'                   { $$ = rattle::AND; }
-    | '|'                   { $$ = rattle::OR; }
+    | AND                   { $$ = rattle::AND; }
+    | OR                    { $$ = rattle::OR; }
     | '>'                   { $$ = rattle::GT; }
     | '<'                   { $$ = rattle::LT; }
     | '+'                   { $$ = rattle::ADD; }
@@ -243,7 +243,7 @@ bin_operator:
     ;
 
 uni_operator:
-    '~'                     { $$ = rattle::NOT; }
+    NOT                     { $$ = rattle::NOT; }
     | '!'                   { $$ = rattle::NOT; }
     | '-'                   { $$ = rattle::SUB; }
     ;
@@ -252,6 +252,8 @@ literal_expr:
     IDENT                   { $$ = new IdNode(*$1); delete $1; }
     | INT                   { $$ = new IntNode($1); }
     | FLOAT                 { $$ = new FloatNode($1); }
+    | TRUE                  { $$ = new BoolNode(true); }
+    | FALSE                 { $$ = new BoolNode(false); }
     | STRING                { $$ = new StringNode(*$1); delete $1; }
     | '[' args_list ']'     { $$ = new ArrayNode($2); }
     ;
