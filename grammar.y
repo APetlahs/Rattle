@@ -66,7 +66,7 @@
 %type <ifblock> if_elif_else
 %type <ifnode> if_block
 %type <elifnode> elif_blocks
-%type <expr> expr literal_expr uni_expr bin_expr simple_expr lhs_expression array_access_expr
+%type <expr> expr literal_expr uni_expr bin_expr simple_expr lhs_expression array_access_expr dot_lookup_expr
 %type <call> func_call_expr
 %type <params> parameter_list parameter_loop
 %type <args> args_list args_loop
@@ -189,6 +189,7 @@ simple_expr:
     | func_call_expr        { $$ = $1; }
     | array_access_expr     { $$ = $1; }
     | '(' expr ')'          { $$ = $2; }
+    | dot_lookup_expr       { $$ = $1; }
     ;
 
 uni_expr:
@@ -203,6 +204,10 @@ bin_expr:
 
 func_call_expr:
     IDENT '(' args_list ')' { $$ = new CallNode(*$1,$3); delete $1; }
+    ;
+
+dot_lookup_expr:
+    simple_expr '.' IDENT   { $$ = new LookupNode($1,*$3); delete $3; }
     ;
 
 parameter_list:

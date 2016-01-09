@@ -49,6 +49,10 @@ void Visitor::visit(ast::UniExprNode *node) {
     VISIT(node->expr);
 }
 
+void Visitor::visit(ast::LookupNode *node) {
+    VISIT(node->expr);
+}
+
 void Visitor::visit(ast::StmtNode *node) {
     VISIT(node->stmt);
 }
