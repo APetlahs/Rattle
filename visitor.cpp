@@ -116,6 +116,7 @@ void Visitor::visit(ast::ArgsNode *node) {
 }
 
 void Visitor::visit(ast::CallNode *node) {
+    VISIT(node->func);
     VISIT(node->args);
 }
 

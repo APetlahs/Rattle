@@ -203,7 +203,7 @@ bin_expr:
     ;
 
 func_call_expr:
-    IDENT '(' args_list ')' { $$ = new CallNode(*$1,$3); delete $1; }
+    simple_expr '(' args_list ')' { $$ = new CallNode($1,$3); }
     ;
 
 dot_lookup_expr:
