@@ -4,10 +4,12 @@
 using namespace rattle::visitor;
 
 Type::Type():
-    typeClass(Undefined), primitive(Null), returnType(NULL), params() {}
+    typeClass(Undefined), primitive(Null),
+    returnType(NULL), params(), members() {}
 
 Type::Type(const enum Primitive type):
-    typeClass(Primitive), primitive(type), returnType(NULL), params() {}
+    typeClass(Primitive), primitive(type),
+    returnType(NULL), params(), members() {}
 
 Type::Type(ast::TypeNode *type):
     typeClass(Primitive), returnType(NULL), params()
@@ -179,4 +181,8 @@ Type Type::getIterator() const {
     if (typeClass == Array) return *returnType;
     if (typeClass == Primitive && primitive == Str) return Type(Str);
     return Type();
+}
+
+Type Type::getMember(const std::string member) {
+    return members[member];
 }

@@ -1,6 +1,7 @@
 #ifndef _TYPE_HPP_
 #define _TYPE_HPP_
 #include <vector>
+#include <map>
 #include <string>
 
 namespace rattle  {
@@ -22,6 +23,7 @@ public:
     enum Primitive primitive;
     Type *returnType;
     std::vector<Type> params;
+    std::map<std::string, Type> members;
 
     Type();
     Type(const enum Primitive type);
@@ -37,6 +39,7 @@ public:
     bool operator!=(const Type &other) const;
     bool isIterable() const;
     Type getIterator() const;
+    Type getMember(const std::string member);
 };
 
 } // namespace visitor

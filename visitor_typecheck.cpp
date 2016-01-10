@@ -153,6 +153,20 @@ void TypeCheckVisitor::visit(ast::UniExprNode *node) {
     curType = node->type;
 }
 
+void TypeCheckVisitor::visit(ast::LookupNode *node) {
+    Visitor::visit(node->expr);
+    Type *lhs = curType;
+    Type member = lhs->getMember(node->member);
+    if (member.typeClass == Undefined) {
+        error = true;
+        std::cerr << lhs->toStr() << " has no member "
+                  << node->member << std::endl;
+        return;
+    }
+    node->type = new Type(member);
+    curType = node->type;
+}
+
 void TypeCheckVisitor::visit(ast::FuncDefNode *node) {
     bool prevFunctionStatus = inFunction;
     inFunction = true;
