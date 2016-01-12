@@ -44,7 +44,13 @@ void CheckVisitor::visit(ast::VarDefNode *node) {
         std::cerr << "variable " << node->typedId->id << " previously defined" << std::endl;
     } else {
         Visitor::visit(node);
-        Symbol s = Symbol(node->typedId->id, Type(node->typedId->type));
+        Type t = Type(node->typedId->type);
+        if (t.typeClass == Undefined) {
+            error = true;
+            std::cerr << "Invalid Type" << std::endl;
+            return;
+        }
+        Symbol s = Symbol(node->typedId->id, t);
         sym.add(s);
     }
 }
