@@ -187,3 +187,11 @@ Type Type::getIterator() const {
 Type Type::getMember(const std::string member) {
     return members[member];
 }
+
+void Type::addMember(const std::string member, Type &t) {
+    members[member] = t;
+}
+
+void Type::addMembers(const std::map<std::string, Type> &members) {
+    this->members.insert(members.begin(), members.end());
+}

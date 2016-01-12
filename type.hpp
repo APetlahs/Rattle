@@ -40,6 +40,8 @@ public:
     bool isIterable() const;
     Type getIterator() const;
     Type getMember(const std::string member);
+    void addMember(const std::string member, Type &t);
+    void addMembers(const std::map<std::string, Type> &members);
 };
 
 } // namespace visitor
