@@ -39,8 +39,7 @@ void TypeCheckVisitor::visit(ast::CallNode *node) {
 void TypeCheckVisitor::visit(ast::ArrayNode *node) {
     Type *prevType = NULL;
     if (node->args.size() < 1) {
-        curType = new Type();
-        curType->typeClass = EmptyArray;
+        curType = new Type(EmptyArray);
     } else {
         for (std::vector<ast::ExprNode*>::iterator i = node->args.begin(); i != node->args.end(); ++i)
         {
@@ -59,9 +58,7 @@ void TypeCheckVisitor::visit(ast::ArrayNode *node) {
                 break;
             }
         }
-        curType = new Type();
-        curType->typeClass = Array;
-        curType->returnType = prevType;
+        curType = new Type(Array, prevType);
     }
     node->type = curType;
 }

@@ -3,6 +3,7 @@
 #include <iostream>
 #include "node.hpp"
 #include "visitor_varcheck.hpp"
+#include "type.hpp"
 using namespace rattle::visitor;
 
 bool CheckVisitor::wasDefined(std::string const &id) {
@@ -45,7 +46,7 @@ void CheckVisitor::visit(ast::VarDefNode *node) {
     } else {
         Visitor::visit(node);
         Type t = Type(node->typedId->type);
-        if (t.typeClass == Undefined) {
+        if (t.isUndefined()) {
             error = true;
             std::cerr << "Invalid Type" << std::endl;
             return;
@@ -110,3 +111,4 @@ void CheckVisitor::visit(ast::BoolNode *node) {
 void CheckVisitor::visit(ast::StringNode *node) {
     node->type = new Type(Str);
 }
+
