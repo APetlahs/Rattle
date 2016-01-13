@@ -13,18 +13,19 @@ class FuncDefNode;
 
 namespace visitor {
 
-enum TypeClass { Undefined, Primitive, Array, EmptyArray, Callable };
-enum Primitive { Null, Int, Float, Str, Bool };
+enum TypeClass { Undefined, Null, Int, Float, Str,
+                 Bool, Array, EmptyArray, Callable };
 
 class Type {
 public:
     enum TypeClass typeClass;
-    enum Primitive primitive;
     Type *returnType;
     std::vector<Type> params;
 
     Type();
-    Type(const enum Primitive type);
+    Type(const enum TypeClass type);
+    Type(const enum TypeClass type, Type *subType);
+    Type(const enum TypeClass type, Type *subType, std::vector<Type> params);
     Type(ast::TypeNode *type);
     Type(ast::FuncDefNode *func);
     Type(const Type &other);
@@ -37,6 +38,7 @@ public:
     bool operator!=(const Type &other) const;
     bool isIterable() const;
     Type getIterator() const;
+    bool isUndefined() const { return typeClass == Undefined; }
 };
 
 } // namespace visitor

@@ -16,8 +16,7 @@ class TypeCheckVisitor: public Visitor {
     bool error;
 public:
     TypeCheckVisitor():
-        curType(), caster(),
-        inFunction(false), error(false) {}
+        curType(), caster(), inFunction(false), error(false) {}
     virtual void visit(ast::IdNode *node);
     virtual void visit(ast::CallNode *node);
     virtual void visit(ast::ArrayNode *node);

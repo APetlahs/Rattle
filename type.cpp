@@ -4,10 +4,16 @@
 using namespace rattle::visitor;
 
 Type::Type():
-    typeClass(Undefined), primitive(Null), returnType(NULL), params() {}
+    typeClass(Undefined), returnType(NULL), params() {}
 
-Type::Type(const enum Primitive type):
-    typeClass(Primitive), primitive(type), returnType(NULL), params() {}
+Type::Type(const enum TypeClass type):
+    typeClass(type), returnType(NULL), params() {}
+
+Type::Type(const enum TypeClass type, Type *subType):
+    typeClass(type), returnType(subType), params() {}
+
+Type::Type(const enum TypeClass type, Type *subType, std::vector<Type> params):
+    typeClass(type), returnType(subType), params(params) {}
 
 Type::Type(ast::TypeNode *type):
     typeClass(Undefined), returnType(NULL), params()
@@ -24,17 +30,16 @@ Type::Type(ast::TypeNode *type):
         typeClass = Array;
         returnType = new Type(type->subType);
     } else {
-        typeClass = Primitive;
-        if (type->id == "int") primitive = Int;
-        else if (type->id == "float") primitive = Float;
-        else if (type->id == "str") primitive = Str;
-        else if (type->id == "bool") primitive = Bool;
-        else typeClass = Undefined;
+        if (type->id == "int") typeClass = Int;
+        else if (type->id == "float") typeClass = Float;
+        else if (type->id == "str") typeClass = Str;
+        else if (type->id == "bool") typeClass = Bool;
+        // TODO: else throw something
     }
 }
 
 Type::Type(ast::FuncDefNode *func):
-    typeClass(Callable), primitive()
+    typeClass(Callable)
 {
     returnType = new Type(func->type);
     for (std::vector<ast::TypedIdNode*>::iterator i = func->args->args.begin();
@@ -45,8 +50,7 @@ Type::Type(ast::FuncDefNode *func):
 }
 
 Type::Type(const Type &other):
-    typeClass(other.typeClass), primitive(other.primitive),
-    params(other.params)
+    typeClass(other.typeClass), params(other.params)
 {
     returnType = other.returnType != NULL ? new Type(*(other.returnType)) : NULL;
 }
@@ -58,15 +62,11 @@ Type::~Type() {
 std::string Type::toStr() {
     std::stringstream ss;
     switch (typeClass) {
-        case Primitive:
-            switch(primitive) {
-                case Null: return "null";
-                case Int: return "int";
-                case Float: return "float";
-                case Str: return "str";
-                case Bool: return "bool";
-                default: return "unknown type"; // TODO: raise something
-            }
+        case Null: return "null";
+        case Int: return "int";
+        case Float: return "float";
+        case Str: return "str";
+        case Bool: return "bool";
         case Array:
             ss << "Array[" << returnType->toStr() << "]";
             return ss.str();
@@ -93,59 +93,45 @@ std::string Type::toStr() {
 Type &Type::operator=(const Type &other) {
     if (this == &other) return *this;
     typeClass = other.typeClass;
-    primitive = other.primitive;
     returnType = other.returnType != NULL ? new Type(*(other.returnType)) : NULL;
     params = other.params;
     return *this;
 }
 
 bool Type::compatible(const Type &other) {
-    if (typeClass == Undefined || other.typeClass == Undefined)
+    if (isUndefined() || other.isUndefined())
         return false;
 
     if (*this == other)
         return true;
 
-    if ((typeClass == Array && other.typeClass == EmptyArray)
-    ||  (typeClass == EmptyArray && other.typeClass == Array)
-    ||  (typeClass == EmptyArray && other.typeClass == EmptyArray))
-        return true;
-
-    if (typeClass != other.typeClass)
-        return false;
-
-    if (typeClass == Primitive) {
-        switch(primitive) {
-            case Float: return other.primitive == Int || other.primitive == Float;
-            default: return primitive == other.primitive;
-        }
-    }
-
-    if (typeClass == Array) {
-        if (returnType == NULL || other.returnType == NULL) {
-            // this is an empty array, compatible with other arrays
+    switch(typeClass) {
+        case Array:
+            return other.typeClass == EmptyArray
+            || (other.typeClass == Array
+                && returnType->compatible(*(other.returnType)));
+        case EmptyArray:
+            return other.typeClass == Array || other.typeClass == EmptyArray;
+        case Callable:
+            if (other.typeClass != Callable) return false;
+            if (!returnType->compatible((*other.returnType))) return false;
+            if (params.size() != other.params.size()) return false;
+            for (unsigned int i = params.size(); i-- > 0;) {
+                Type t = params[i];
+                if (!t.compatible(other.params[i])) return false;
+            }
             return true;
-        } else {
-            return returnType->compatible(*(other.returnType));
-        }
+        case Float:
+            return other.typeClass == Int || other.typeClass == Float;
+        default:
+            return typeClass == other.typeClass;
     }
-    if (typeClass == Callable) {
-        if (!returnType->compatible((*other.returnType))) return false;
-        if (params.size() != other.params.size()) return false;
-        for (unsigned int i = params.size(); i-- > 0;) {
-            Type t = params[i];
-            if (!t.compatible(other.params[i])) return false;
-        }
-        return true;
-    }
-    return false;
 }
 
 bool Type::operator==(const Type &other) const {
     if (typeClass != other.typeClass) return false;
     switch(typeClass) {
         case Undefined: return true;
-        case Primitive: return primitive == other.primitive;
         case Array: return returnType->compatible(*(other.returnType));
         case Callable:
             if (!returnType->compatible((*other.returnType))) return false;
@@ -155,7 +141,7 @@ bool Type::operator==(const Type &other) const {
                 if (!t.compatible(other.params[i])) return false;
             }
             return true;
-        default: return false;
+        default: return typeClass == other.typeClass;
     }
 }
 
@@ -167,17 +153,13 @@ bool Type::isIterable() const {
     switch (typeClass) {
         case Array: return true;
         case EmptyArray: return true;
-        case Primitive:
-            switch (primitive) {
-                case Str: return true;
-                default: return false;
-            }
+        case Str: return true;
         default: return false;
     }
 }
 
 Type Type::getIterator() const {
     if (typeClass == Array) return *returnType;
-    if (typeClass == Primitive && primitive == Str) return Type(Str);
+    if (typeClass == Str) return Type(Str);
     return Type();
 }
