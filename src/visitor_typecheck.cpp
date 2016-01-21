@@ -153,7 +153,7 @@ void TypeCheckVisitor::visit(ast::UniExprNode *node) {
 void TypeCheckVisitor::visit(ast::LookupNode *node) {
     Visitor::visit(node->expr);
     Type *lhs = curType;
-    Type member = lhs->getMember(node->member);
+    Type member = memberTable.getMember(node->member, *lhs);
     if (member.typeClass == Undefined) {
         error = true;
         std::cerr << lhs->toStr() << " has no member "
