@@ -1,0 +1,8 @@
+func foo()->(int)->int {
+  func bar(x:int)->int {
+    return x + 1;
+  }
+  return bar;
+}
+
+var x : int = -foo()(4);

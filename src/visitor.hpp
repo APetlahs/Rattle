@@ -17,6 +17,7 @@ namespace ast {
     class TypedIdNode;
     class BinExprNode;
     class UniExprNode;
+    class LookupNode;
     class StmtNode;
     class ReturnNode;
     class BlockNode;
@@ -56,6 +57,7 @@ public:
     virtual void visit(ast::TypedIdNode *node);
     virtual void visit(ast::BinExprNode *node);
     virtual void visit(ast::UniExprNode *node);
+    virtual void visit(ast::LookupNode *node);
     virtual void visit(ast::StmtNode *node);
     virtual void visit(ast::ReturnNode *node);
     virtual void visit(ast::BlockNode *node);

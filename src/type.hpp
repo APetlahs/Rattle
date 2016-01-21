@@ -1,6 +1,7 @@
 #ifndef _TYPE_HPP_
 #define _TYPE_HPP_
 #include <vector>
+#include <map>
 #include <string>
 
 namespace rattle  {
@@ -14,13 +15,15 @@ class FuncDefNode;
 namespace visitor {
 
 enum TypeClass { Undefined, Null, Int, Float, Str,
-                 Bool, Array, EmptyArray, Callable };
+                 Bool, Array, EmptyArray, Callable,
+                 Object };
 
 class Type {
 public:
     enum TypeClass typeClass;
     Type *returnType;
     std::vector<Type> params;
+    std::string className;
 
     Type();
     Type(const enum TypeClass type);
@@ -39,6 +42,17 @@ public:
     bool isIterable() const;
     Type getIterator() const;
     bool isUndefined() const { return typeClass == Undefined; }
+};
+
+class MemberTable {
+public:
+    std::map<TypeClass, std::map<std::string, Type> > primitiveMembers;
+    std::map<std::string, std::map<std::string, Type> > classMembers;
+
+    MemberTable();
+    bool hasMember(const std::string member, const Type &t);
+    Type getMember(const std::string member, const Type &t);
+    void bindMember(const std::string className, const std::string member, const Type &t);
 };
 
 } // namespace visitor

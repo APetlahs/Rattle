@@ -130,6 +130,15 @@ public:
     ACCEPT();
 };
 
+class LookupNode: public ExprNode {
+public:
+    ExprNode *expr;
+    std::string member;
+    LookupNode(ExprNode *expr, std::string member): expr(expr), member(member) {}
+    virtual void deleteAll() { expr->deleteAll(); }
+    ACCEPT();
+};
+
 class StmtNode: public ASTNode {
 public:
     ASTNode *stmt;
@@ -248,10 +257,13 @@ public:
 
 class CallNode: public ExprNode {
 public:
-    std::string id;
+    ExprNode *func;
     ArgsNode *args;
-    CallNode(std::string id, ArgsNode *args): id(id), args(args) {};
-    virtual void deleteAll() { args->deleteAll(); }
+    CallNode(ExprNode *func, ArgsNode *args): func(func), args(args) {};
+    virtual void deleteAll() {
+        func->deleteAll();
+        args->deleteAll();
+    }
     ACCEPT();
 };
 

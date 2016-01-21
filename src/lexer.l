@@ -46,7 +46,7 @@ extern void yyerror(const char *s);
 "!="                    return NEQ;
 ">="                    return GTE;
 "<="                    return LTE;
-[-+*/,:;!()<>\[\]|\{\}\&\%\$\^\=\~]  return *yytext;
+[-+*/,:;!()<>\[\]|\{\}\&\%\$\^\=\~\.]  return *yytext;
 ([ \t\n\r])             ; /* skip whitespace */
 <<EOF>>                 return END_OF_FILE;
 .                       yyerror("invalid character");

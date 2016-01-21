@@ -4,19 +4,19 @@
 using namespace rattle::visitor;
 
 Type::Type():
-    typeClass(Undefined), returnType(NULL), params() {}
+    typeClass(Undefined), returnType(NULL), params(), className() {}
 
 Type::Type(const enum TypeClass type):
-    typeClass(type), returnType(NULL), params() {}
+    typeClass(type), returnType(NULL), params(), className() {}
 
 Type::Type(const enum TypeClass type, Type *subType):
-    typeClass(type), returnType(subType), params() {}
+    typeClass(type), returnType(subType), params(), className() {}
 
 Type::Type(const enum TypeClass type, Type *subType, std::vector<Type> params):
     typeClass(type), returnType(subType), params(params) {}
 
 Type::Type(ast::TypeNode *type):
-    typeClass(Undefined), returnType(NULL), params()
+    typeClass(Undefined), returnType(NULL), params(), className()
 {
     if (type->callable) {
         typeClass = Callable;
@@ -83,6 +83,8 @@ std::string Type::toStr() {
             }
             ss << ")->" << returnType->toStr();
             return ss.str();
+        case Object:
+            return "class: " + className;
         case Undefined:
             return "Undefined";
         default:
@@ -95,6 +97,7 @@ Type &Type::operator=(const Type &other) {
     typeClass = other.typeClass;
     returnType = other.returnType != NULL ? new Type(*(other.returnType)) : NULL;
     params = other.params;
+    className = other.className;
     return *this;
 }
 
@@ -123,6 +126,8 @@ bool Type::compatible(const Type &other) {
             return true;
         case Float:
             return other.typeClass == Int || other.typeClass == Float;
+        case Object:
+            return false;
         default:
             return typeClass == other.typeClass;
     }
@@ -162,4 +167,58 @@ Type Type::getIterator() const {
     if (typeClass == Array) return *returnType;
     if (typeClass == Str) return Type(Str);
     return Type();
+}
+
+MemberTable::MemberTable(): primitiveMembers(), classMembers() {
+    // array methods. these will need extra logic depending on
+    // type of array
+    std::vector<Type> pushParams;
+    pushParams.push_back(Type(Undefined));
+    Type arrayPush = Type(Callable, new Type(Null), pushParams);
+    Type arrayPop = Type(Callable, NULL);
+    Type length = Type(Int);
+
+    std::map<std::string, Type> strMembers;
+    std::map<std::string, Type> arrayMembers;
+    strMembers["length"] = length;
+    arrayMembers["length"] = length;
+    arrayMembers["append"] = arrayPush;
+    arrayMembers["pop"] = arrayPop;
+
+    primitiveMembers[Str] = strMembers;
+    primitiveMembers[Array] = arrayMembers;
+}
+
+bool MemberTable::hasMember(const std::string member, const Type &t) {
+    TypeClass tc = t.typeClass;
+    switch (tc) {
+        case Object: return classMembers[t.className].count(member) > 0;
+        default: return primitiveMembers[tc].count(member) > 0;
+    }
+    return false;
+}
+
+Type MemberTable::getMember(const std::string member, const Type &t) {
+    TypeClass tc = t.typeClass;
+    std::vector<Type> pushParams;
+    Type m;
+    switch(tc) {
+        case Object: return classMembers[t.className][member];
+        case Array:
+            if (member == "append") {
+                m = primitiveMembers[Array]["append"];
+                pushParams.push_back(Type(*(t.returnType)));
+                m.params = pushParams;
+                return m;
+            } else if (member == "pop") {
+                m = primitiveMembers[Array]["pop"];
+                m.returnType = new Type(*(t.returnType));
+                return m;
+            }
+        default: return primitiveMembers[tc][member];
+    }
+}
+
+void MemberTable::bindMember(const std::string className, const std::string member, const Type &t) {
+        classMembers[className][member] = t;
 }

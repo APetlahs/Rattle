@@ -11,21 +11,29 @@ void TypeCheckVisitor::visit(ast::IdNode *node) {
 }
 
 void TypeCheckVisitor::visit(ast::CallNode *node) {
+    Visitor::visit(node->func);
+    Type *funcType = curType;
     std::vector<ast::ExprNode*> args = node->args->args;
-    if (node->type->typeClass != Undefined && args.size() != node->type->params.size()) {
+    if (funcType->typeClass != Callable) {
+        error = true;
+        std::cerr << funcType->toStr() << " is not callable." << std::endl;
+        return;
+    }
+    if (args.size() != funcType->params.size()) {
         std::cerr << "Invalid number of arguments" << std::endl;
         error = true;
         return;
     } else {
         for(unsigned int i = 0; i < args.size(); ++i) {
             Visitor::visit(args[i]);
-            if (!node->type->params[i].compatible(*curType)) {
+            if (!funcType->params[i].compatible(*curType)) {
                 error = true;
                 std::cerr << "incompatible argument type" << std::endl;
             }
         }
     }
-    curType = node->type->returnType;
+    curType = funcType->returnType;
+    node->type = curType;
 }
 
 void TypeCheckVisitor::visit(ast::ArrayNode *node) {
@@ -139,6 +147,20 @@ void TypeCheckVisitor::visit(ast::UniExprNode *node) {
         std::cerr << "Type error: " << t->toStr();
         node->type = new Type();
     }
+    curType = node->type;
+}
+
+void TypeCheckVisitor::visit(ast::LookupNode *node) {
+    Visitor::visit(node->expr);
+    Type *lhs = curType;
+    Type member = memberTable.getMember(node->member, *lhs);
+    if (member.typeClass == Undefined) {
+        error = true;
+        std::cerr << lhs->toStr() << " has no member "
+                  << node->member << std::endl;
+        return;
+    }
+    node->type = new Type(member);
     curType = node->type;
 }
 

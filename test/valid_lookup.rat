@@ -1,0 +1,4 @@
+var arr1 : [int] = [1,2,3];
+
+var length : int = arr1.length;
+arr1.append(1);

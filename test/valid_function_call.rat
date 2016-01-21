@@ -1,0 +1,9 @@
+func apply( f : (int)->int , x : int) -> int {
+  return f(x);
+}
+
+var foo : ( (int)->int, int ) -> int = apply;
+
+func increment( x : int ) -> int { return x + 1; }
+
+((foo))( (increment) , 10 );
