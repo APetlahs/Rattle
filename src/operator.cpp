@@ -1,7 +1,30 @@
+#include <string>
 #include "operator.hpp"
 #include "type.hpp"
 using namespace rattle;
 using namespace rattle::visitor;
+
+std::string rattle::operatorToStr(const Operator op) {
+    switch (op) {
+        case ADD: return "+";
+        case SUB: return "-";
+        case MUL: return "*";
+        case DIV: return "/";
+        case POW: return "^";
+        case MOD: return "\%";
+        case AND: return "and";
+        case OR: return "or";
+        case NOT: return "not";
+        case LT: return "<";
+        case GT: return ">";
+        case LTE: return "<=";
+        case GTE: return ">=";
+        case EQ: return "==";
+        case NEQ: return "!=";
+        case ACCESS: return "[]";
+        default: return "Unknown Operator!";
+    }
+}
 
 static bool isMath(Operator op) {
     return (op == ADD)||(op == SUB)||(op == MUL)

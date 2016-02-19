@@ -1,5 +1,6 @@
 #ifndef _OPERATOR_HPP_
 #define _OPERATOR_HPP_
+#include <string>
 /*
 * defines the rattle operators and type casting tables
 */
@@ -14,6 +15,8 @@ enum Operator { ADD,SUB,MUL,DIV,POW,
                 MOD,AND,OR,NOT,LT,
                 GT,LTE,GTE,EQ,NEQ,
                 ACCESS };
+
+std::string operatorToStr(const Operator op);
 
 class CastMap {
 public:

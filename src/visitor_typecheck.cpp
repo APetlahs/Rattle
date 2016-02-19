@@ -144,7 +144,8 @@ void TypeCheckVisitor::visit(ast::UniExprNode *node) {
         node->type = new Type(caster.cast(node->op,*t));
     } else {
         error = true;
-        std::cerr << "Type error: " << t->toStr();
+        std::cerr << "Type error: " << t->toStr() << " and operator '"
+                  << operatorToStr(node->op) << "' are not compatible" << std::endl;
         node->type = new Type();
     }
     curType = node->type;
