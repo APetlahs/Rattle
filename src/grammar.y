@@ -49,7 +49,7 @@
 %token CONST VAR FUNC RETURN
 %token FOR WHILE IN IF ELIF ELSE
 %token RARROW LARROW EQ GTE LTE NEQ
-%token TRUE FALSE END_OF_FILE
+%token TRUE FALSE TNULL END_OF_FILE
 
 %token <str> IDENT STRING
 %token <ival> INT
@@ -259,6 +259,7 @@ literal_expr:
     | FLOAT                 { $$ = new FloatNode($1); }
     | TRUE                  { $$ = new BoolNode(true); }
     | FALSE                 { $$ = new BoolNode(false); }
+    | TNULL                 { $$ = new NullNode(); }
     | STRING                { $$ = new StringNode(*$1); delete $1; }
     | '[' args_list ']'     { $$ = new ArrayNode($2); }
     ;
@@ -269,6 +270,7 @@ typed_var:
 
 type:
     IDENT                               { $$ = new TypeNode(*$1); delete $1; }
+    | TNULL                             { $$ = new TypeNode(); }
     | '[' type ']'                      { $$ = new TypeNode($2); }
     | '(' type_list ')' RARROW type     { $$ = new TypeNode($2, $5); }
     | '(' ')' RARROW type               { $$ = new TypeNode(new TypeListNode(), $4); }

@@ -64,6 +64,12 @@ public:
     ACCEPT();
 };
 
+class NullNode: public ExprNode {
+public:
+    NullNode() {}
+    ACCEPT();
+};
+
 class StringNode: public ExprNode {
 public:
     std::string val;
@@ -80,12 +86,15 @@ public:
     TypeNode *subType;
     TypeListNode *params;
     bool callable;
+    bool isNull;
+    TypeNode():
+        subType(NULL), callable(false), isNull(true) {}
     TypeNode(std::string id):
-        id(id), subType(NULL), params(NULL), callable(false) {}
+        id(id), subType(NULL), callable(false), isNull(false) {}
     TypeNode(TypeNode* type):
-        id(), subType(type), params(NULL), callable(false) {}
+        subType(type), callable(false), isNull(false) {}
     TypeNode(TypeListNode *params, TypeNode *rtype):
-        id(), subType(rtype), params(params), callable(true) {}
+        subType(rtype), params(params), callable(true), isNull(false) {}
     ACCEPT();
 };
 

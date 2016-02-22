@@ -29,6 +29,7 @@ public:
     virtual void visit(ast::IntNode *node);
     virtual void visit(ast::FloatNode *node);
     virtual void visit(ast::BoolNode *node);
+    virtual void visit(ast::NullNode *node);
     virtual void visit(ast::StringNode *node);
 };
 

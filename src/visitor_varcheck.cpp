@@ -108,6 +108,10 @@ void CheckVisitor::visit(ast::BoolNode *node) {
     node->type = new Type(Bool);
 }
 
+void CheckVisitor::visit(ast::NullNode *node) {
+    node->type = new Type(Null);
+}
+
 void CheckVisitor::visit(ast::StringNode *node) {
     node->type = new Type(Str);
 }

@@ -106,6 +106,10 @@ void TypeCheckVisitor::visit(ast::BoolNode *node) {
     curType = node->type;
 }
 
+void TypeCheckVisitor::visit(ast::NullNode *node) {
+    curType = node->type;
+}
+
 void TypeCheckVisitor::visit(ast::StringNode *node) {
     curType = node->type;
 }

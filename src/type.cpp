@@ -18,7 +18,9 @@ Type::Type(const enum TypeClass type, Type *subType, std::vector<Type> params):
 Type::Type(ast::TypeNode *type):
     typeClass(Undefined), returnType(NULL), params(), className()
 {
-    if (type->callable) {
+    if (type->isNull) {
+        typeClass = Null;
+    } else if (type->callable) {
         typeClass = Callable;
         returnType = new Type(type->subType);
         for (std::vector<ast::TypeNode*>::iterator i = type->params->types.begin();
