@@ -1,0 +1,19 @@
+func abs( x : int ) -> int {
+    var abs_x : int = x;
+    if x < 0 {
+        abs_x = -x;
+    } else {
+        abs_x = x;
+    }
+    return abs_x;
+}
+
+func even( x : int ) -> bool {
+    if x % 2 == 0 {
+        return True;
+    }
+    return False;
+}
+
+abs(15);
+even(20);

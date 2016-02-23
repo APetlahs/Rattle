@@ -87,7 +87,9 @@ void Visitor::visit(ast::ElifNode *node) {
 void Visitor::visit(ast::IfBlock *node) {
     VISIT(node->ifStmt);
     VISIT(node->elifStmts);
-    VISIT(node->elseStmt);
+    if (node->elseStmt) {
+        VISIT(node->elseStmt);
+    }
 }
 
 void Visitor::visit(ast::ForNode *node) {

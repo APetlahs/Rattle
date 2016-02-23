@@ -205,7 +205,9 @@ public:
     virtual void deleteAll() {
         ifStmt->deleteAll();
         elifStmts->deleteAll();
-        elseStmt->deleteAll();
+        if (elseStmt) {
+            elseStmt->deleteAll();
+        }
     }
     ACCEPT();
 };
