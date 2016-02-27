@@ -40,7 +40,6 @@
     rattle::ast::VarDefNode *vardef;
     rattle::ast::AssignNode *assign;
     rattle::ast::ModuleNode *module;
-    rattle::Operator op;
     std::string *str;
     double fval;
     long ival;
@@ -70,7 +69,6 @@
 %type <call> func_call_expr
 %type <params> parameter_list parameter_loop
 %type <args> args_list args_loop
-%type <op> bin_operator uni_operator
 %type <typedId> typed_var
 %type <type> type
 %type <typelist> type_list
@@ -80,8 +78,8 @@
 %left '+' '-'
 %left '*' '/' '%'
 %left '^'
-%left BINARY
-%left UNARY
+%left BMINUS
+%left UMINUS
 
 
 %start module
@@ -193,13 +191,27 @@ simple_expr:
     ;
 
 uni_expr:
-    uni_operator expr
-    %prec UNARY             { $$ = new UniExprNode($1,$2); }
+    NOT expr %prec UMINUS   { $$ = new UniExprNode(rattle::NOT,$2); }
+    | '!' expr %prec UMINUS { $$ = new UniExprNode(rattle::NOT,$2); }
+    | '-' expr %prec UMINUS { $$ = new UniExprNode(rattle::SUB,$2); }
     ;
 
 bin_expr:
-    expr bin_operator expr
-    %prec BINARY            { $$ = new BinExprNode($1,$2,$3); }
+    expr EQ expr            { $$ = new BinExprNode($1,rattle::EQ,$3); }
+    | expr GTE expr         { $$ = new BinExprNode($1,rattle::GTE,$3); }
+    | expr LTE expr         { $$ = new BinExprNode($1,rattle::LTE,$3); }
+    | expr NEQ expr         { $$ = new BinExprNode($1,rattle::NEQ,$3); }
+    | expr AND expr         { $$ = new BinExprNode($1,rattle::AND,$3); }
+    | expr OR expr          { $$ = new BinExprNode($1,rattle::OR,$3); }
+    | expr '>' expr         { $$ = new BinExprNode($1,rattle::GT,$3); }
+    | expr '<' expr         { $$ = new BinExprNode($1,rattle::LT,$3); }
+    | expr '+' expr         { $$ = new BinExprNode($1,rattle::ADD,$3); }
+    | expr '*' expr         { $$ = new BinExprNode($1,rattle::MUL,$3); }
+    | expr '/' expr         { $$ = new BinExprNode($1,rattle::DIV,$3); }
+    | expr '%' expr         { $$ = new BinExprNode($1,rattle::MOD,$3); }
+    | expr '^' expr         { $$ = new BinExprNode($1,rattle::POW,$3); }
+    | expr '-' expr
+      %prec BMINUS          { $$ = new BinExprNode($1,rattle::SUB,$3); }
     ;
 
 func_call_expr:
@@ -228,29 +240,6 @@ args_list:
 args_loop:
     expr                    { $$ = new ArgsNode(); $$->push($1); }
     | args_loop ',' expr    { $1->push($3); $$ = $1; }
-    ;
-
-bin_operator:
-      EQ                    { $$ = rattle::EQ; }
-    | GTE                   { $$ = rattle::GTE; }
-    | LTE                   { $$ = rattle::LTE; }
-    | NEQ                   { $$ = rattle::NEQ; }
-    | AND                   { $$ = rattle::AND; }
-    | OR                    { $$ = rattle::OR; }
-    | '>'                   { $$ = rattle::GT; }
-    | '<'                   { $$ = rattle::LT; }
-    | '+'                   { $$ = rattle::ADD; }
-    | '-'                   { $$ = rattle::SUB; }
-    | '*'                   { $$ = rattle::MUL; }
-    | '/'                   { $$ = rattle::DIV; }
-    | '%'                   { $$ = rattle::MOD; }
-    | '^'                   { $$ = rattle::POW; }
-    ;
-
-uni_operator:
-    NOT                     { $$ = rattle::NOT; }
-    | '!'                   { $$ = rattle::NOT; }
-    | '-'                   { $$ = rattle::SUB; }
     ;
 
 literal_expr:
