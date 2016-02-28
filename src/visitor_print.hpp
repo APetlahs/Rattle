@@ -18,12 +18,17 @@ public:
 
     virtual void visit(ast::IntNode *node);
     virtual void visit(ast::FloatNode *node);
-    virtual void visit(ast::ArrayNode *node);
+    virtual void visit(ast::BoolNode *node);
+    virtual void visit(ast::NullNode *node);
+    virtual void visit(ast::StringNode *node);
     virtual void visit(ast::IdNode *node);
+    virtual void visit(ast::ArrayNode *node);
     virtual void visit(ast::TypeNode *node);
+    virtual void visit(ast::TypeListNode *node);
     virtual void visit(ast::TypedIdNode *node);
     virtual void visit(ast::BinExprNode *node);
     virtual void visit(ast::UniExprNode *node);
+    virtual void visit(ast::LookupNode *node);
     virtual void visit(ast::StmtNode *node);
     virtual void visit(ast::ReturnNode *node);
     virtual void visit(ast::BlockNode *node);

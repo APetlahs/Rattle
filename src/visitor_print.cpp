@@ -30,9 +30,26 @@ void PrintVisitor::visit(ast::FloatNode *node) {
     VISIT(node);
 }
 
+void PrintVisitor::visit(ast::BoolNode *node) {
+    std::cout << prefix << "BoolNode: " << node << std::endl;
+    std::cout << prefix << (node->val ? "True" : "False") << std::endl;
+    std::cout << printType(prefix, node->type) << std::endl;
+    VISIT(node);
+}
+
+void PrintVisitor::visit(ast::StringNode *node) {
+    std::cout << prefix << "StringNode: " << node << std::endl;
+    std::cout << prefix << node->val << std::endl;
+}
+
+void PrintVisitor::visit(ast::NullNode *node) {
+    std::cout << prefix << "NullNode: " << node << std::endl;
+}
+
 void PrintVisitor::visit(ast::ArrayNode *node) {
     std::cout << prefix << "ArrayNode: " << node << std::endl;
     std::cout << prefix << node->type->toStr() << std::endl;
+    std::cout << printType(prefix, node->type) << std::endl;
     VISIT(node);
 }
 
@@ -44,8 +61,15 @@ void PrintVisitor::visit(ast::IdNode *node) {
 }
 
 void PrintVisitor::visit(ast::TypeNode *node) {
+    Type t(node);
     std::cout << prefix << "TypeNode: " << node << std::endl;
     std::cout << prefix << node->id << std::endl;
+    std::cout << printType(prefix, &t) << std::endl;
+    VISIT(node);
+}
+
+void PrintVisitor::visit(ast::TypeListNode *node) {
+    std::cout << prefix << "TypeListNode: " << node << std::endl;
     VISIT(node);
 }
 
@@ -66,6 +90,12 @@ void PrintVisitor::visit(ast::UniExprNode *node) {
     std::cout << prefix << "UniExprNode: " << node << std::endl;
     std::cout << prefix << "operator: " << node->op << std::endl;
     std::cout << printType(prefix, node->type) << std::endl;
+    VISIT(node);
+}
+
+void PrintVisitor::visit(ast::LookupNode *node) {
+    std::cout << prefix << "LookupNode: " << node << std::endl;
+    std::cout << prefix << "member: " << node->member << std::endl;
     VISIT(node);
 }
 
