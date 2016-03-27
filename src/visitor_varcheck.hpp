@@ -14,13 +14,8 @@ namespace visitor {
 * and building a symbol table
 */
 class CheckVisitor : public Visitor {
-    SymbolTable sym;
-    std::vector<SymbolTable> globalSymStack;
-    bool error;
-    Symbol getSymbol(std::string const &id);
-    bool wasDefined(std::string const &id);
 public:
-    CheckVisitor(): sym(), error(false) {}
+    CheckVisitor();
     virtual void visit(ast::BlockNode *node);
     virtual void visit(ast::IdNode* node);
     virtual void visit(ast::FuncDefNode *node);
@@ -31,6 +26,15 @@ public:
     virtual void visit(ast::BoolNode *node);
     virtual void visit(ast::NullNode *node);
     virtual void visit(ast::StringNode *node);
+private:
+    SymbolTable *sym;
+    SymbolTable globalSym;
+    std::vector<SymbolTable*> globalSymStack;
+    bool error;
+    void pushScope();
+    void popScope();
+    Symbol getSymbol(std::string const &id);
+    bool wasDefined(std::string const &id);
 };
 
 }

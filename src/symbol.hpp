@@ -9,8 +9,9 @@ namespace visitor {
 struct Symbol {
     std::string id;
     Type type;
+    bool local;
     Symbol();
-    Symbol(std::string id, Type t);
+    Symbol(std::string id, Type t, bool local=true);
     Symbol(const Symbol &other);
     Symbol &operator=(const Symbol &other);
 };
@@ -23,6 +24,7 @@ public:
     void add(const Symbol &s);
     bool exists(const std::string &s);
     Symbol get(const std::string &s);
+    void printAll();
 };
 
 } // namespace visitor

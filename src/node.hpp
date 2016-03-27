@@ -13,6 +13,7 @@ namespace rattle {
 namespace visitor {
 // forward decleration to avoid cyclic dependencies
 class Type;
+class SymbolTable;
 };
 
 namespace ast {
@@ -165,10 +166,11 @@ public:
 class BlockNode: public ASTNode {
 public:
     std::vector<StmtNode*> stmts;
-    // This map stores the non-local symbols available to this code block.
-    // It is mutated by Visitors.
-    std::map<std::string, TypeNode*> nonLocalVars;
-    BlockNode(): stmts(), nonLocalVars() {}
+    // This map stores symbols used in this code block.
+    // it is initialized here but modifed by visitors.
+    visitor::SymbolTable *symbols;
+    BlockNode();
+    ~BlockNode();
     void push(StmtNode *stmt) { stmts.push_back(stmt); }
     virtual void deleteAll();
     ACCEPT();

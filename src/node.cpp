@@ -1,5 +1,6 @@
 #include "type.hpp"
 #include "node.hpp"
+#include "symbol.hpp"
 
 using namespace rattle::ast;
 using std::vector;
@@ -10,6 +11,14 @@ void ElifNode::deleteAll() {
     {
         (*i)->deleteAll();
     }
+}
+
+BlockNode::BlockNode(): stmts() {
+    symbols = new visitor::SymbolTable();
+}
+
+BlockNode::~BlockNode() {
+    delete symbols;
 }
 
 void BlockNode::deleteAll() {

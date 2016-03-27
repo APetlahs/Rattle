@@ -6,24 +6,42 @@
 #include "type.hpp"
 using namespace rattle::visitor;
 
+CheckVisitor::CheckVisitor(): error(false) {
+    globalSym = SymbolTable();
+    sym = &globalSym;
+}
+
+void CheckVisitor::pushScope() {
+    if (sym != NULL) {
+        globalSymStack.push_back(sym);
+    }
+}
+
+void CheckVisitor::popScope() {
+    if (globalSymStack.size() > 0) {
+        sym = globalSymStack.back();
+        globalSymStack.pop_back();
+    }
+}
+
 bool CheckVisitor::wasDefined(std::string const &id) {
-    if (sym.exists(id)) {
+    if (sym->exists(id)) {
         return true;
     } else {
         for(unsigned int i = globalSymStack.size(); i-- > 0;) {
-            if (globalSymStack[i].exists(id)) return true;
+            if (globalSymStack[i]->exists(id)) return true;
         }
     }
     return false;
 }
 
 Symbol CheckVisitor::getSymbol(std::string const &id) {
-    if (sym.exists(id)) {
-        return sym.get(id);
+    if (sym->exists(id)) {
+        return sym->get(id);
     } else {
         for(unsigned int i = globalSymStack.size(); i-- > 0;) {
-            if (globalSymStack[i].exists(id)) {
-                return globalSymStack[i].get(id);
+            if (globalSymStack[i]->exists(id)) {
+                return globalSymStack[i]->get(id);
             }
         }
     }
@@ -32,15 +50,14 @@ Symbol CheckVisitor::getSymbol(std::string const &id) {
 }
 
 void CheckVisitor::visit(ast::BlockNode *node) {
-    globalSymStack.push_back(sym);
-    sym = SymbolTable();
+    pushScope();
+    sym = node->symbols;
     Visitor::visit(node);
-    sym = globalSymStack.back();
-    globalSymStack.pop_back();
+    popScope();
 }
 
 void CheckVisitor::visit(ast::VarDefNode *node) {
-    if (sym.exists(node->typedId->id)) {
+    if (sym->exists(node->typedId->id)) {
         error = true;
         std::cerr << "variable " << node->typedId->id << " previously defined" << std::endl;
     } else {
@@ -52,7 +69,7 @@ void CheckVisitor::visit(ast::VarDefNode *node) {
             return;
         }
         Symbol s = Symbol(node->typedId->id, t);
-        sym.add(s);
+        sym->add(s);
     }
 }
 
@@ -67,33 +84,31 @@ void CheckVisitor::visit(ast::IdNode *node) {
 }
 
 void CheckVisitor::visit(ast::ForNode *node) {
-    globalSymStack.push_back(sym);
+    pushScope();
     Symbol s = Symbol(node->var->id, Type(node->var->type));
-    sym.add(s);
+    sym->add(s);
     Visitor::visit(node);
-    sym = globalSymStack.back();
-    globalSymStack.pop_back();
+    popScope();
 }
 
 void CheckVisitor::visit(ast::FuncDefNode *node) {
     #define params node->args->args
-    if (sym.exists(node->id)) {
+    if (sym->exists(node->id)) {
         error = true;
         std::cerr << "function " << node->id << " previously defined" << std::endl;
     }
     Symbol s = Symbol(node->id, Type(node));
-    sym.add(s);
-    globalSymStack.push_back(sym);
-    sym = SymbolTable();
+    sym->add(s);
+    pushScope();
+    sym = node->body->symbols;
     for (std::vector<ast::TypedIdNode*>::iterator i = params.begin();
          i != params.end(); ++i)
     {
         Symbol s = Symbol((*i)->id, Type((*i)->type));
-        sym.add(s);
+        sym->add(s);
     }
     Visitor::visit(node);
-    sym = globalSymStack.back();
-    globalSymStack.pop_back();
+    popScope();
 }
 
 void CheckVisitor::visit(ast::IntNode *node) {
