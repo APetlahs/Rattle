@@ -3,17 +3,18 @@
 #include "type.hpp"
 using namespace rattle::visitor;
 
-Symbol::Symbol(): id(), type(), local(true) {}
+Symbol::Symbol(): id(), type(), scope(Local) {}
 
-Symbol::Symbol(std::string id, Type t, bool local):
-    id(id), type(t), local(true) {}
+Symbol::Symbol(std::string id, Type t, enum SymbolScope scope):
+    id(id), type(t), scope(scope) {}
 
-Symbol::Symbol(const Symbol &other): id(other.id), type(other.type) {}
+Symbol::Symbol(const Symbol &other):
+    id(other.id), type(other.type), scope(other.scope) {}
 
 Symbol &Symbol::operator=(const Symbol &other) {
     id = other.id;
     type = other.type;
-    local = other.local;
+    scope = other.scope;
     return *this;
 }
 
@@ -33,8 +34,12 @@ void SymbolTable::printAll() {
     for (std::map<std::string, Symbol>::iterator i = sym.begin();
         i != sym.end(); ++i)
     {
-        std::cout << i->first << " : "
-                  <<(i->second.local ? "local" : "non-local")
-                  << std::endl;
+        std::cout << i->first << " : ";
+        switch (i->second.scope) {
+            case Local: std::cout << "local"; break;
+            case Closed: std::cout << "local"; break;
+            case Global: std::cout << "local"; break;
+        }
+        std::cout << std::endl;
     }
 }

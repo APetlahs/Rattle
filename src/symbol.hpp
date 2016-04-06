@@ -6,12 +6,14 @@
 namespace rattle {
 namespace visitor {
 
+enum SymbolScope { Global, Closed, Local };
+
 struct Symbol {
     std::string id;
     Type type;
-    bool local;
+    enum SymbolScope scope;
     Symbol();
-    Symbol(std::string id, Type t, bool local=true);
+    Symbol(std::string id, Type t, enum SymbolScope scope=Local);
     Symbol(const Symbol &other);
     Symbol &operator=(const Symbol &other);
 };

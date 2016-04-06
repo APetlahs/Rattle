@@ -54,6 +54,7 @@ public:
 class IdNode: public ExprNode {
 public:
     std::string id;
+    unsigned int scope; // annotated by var_check
     IdNode(std::string id): id(id) {}
     ACCEPT();
 };

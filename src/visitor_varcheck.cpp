@@ -37,11 +37,13 @@ bool CheckVisitor::wasDefined(std::string const &id) {
 
 Symbol CheckVisitor::getSymbol(std::string const &id) {
     if (sym->exists(id)) {
-        return sym->get(id);
+        Symbol s = sym->get(id);
     } else {
         for(unsigned int i = globalSymStack.size(); i-- > 0;) {
             if (globalSymStack[i]->exists(id)) {
-                return globalSymStack[i]->get(id);
+                Symbol s = globalSymStack[i]->get(id);
+                s.scope = (i == 1)? Global : Closed;
+                return s;
             }
         }
     }
@@ -76,6 +78,7 @@ void CheckVisitor::visit(ast::VarDefNode *node) {
 void CheckVisitor::visit(ast::IdNode *node) {
     if (wasDefined(node->id)) {
         node->type = new Type(getSymbol(node->id).type);
+        node->scope = getSymbol(node->id).scope;
     } else {
         node->type = new Type();
         error = true;
