@@ -2,6 +2,7 @@
 #include <string>
 #include "node.hpp"
 #include "type.hpp"
+#include "symbol.hpp"
 #include "visitor_print.hpp"
 using namespace rattle::visitor;
 
@@ -57,6 +58,14 @@ void PrintVisitor::visit(ast::IdNode *node) {
     std::cout << prefix << "IdNode: " << node << std::endl;
     std::cout << prefix << node->id << std::endl;
     std::cout << printType(prefix, node->type) << std::endl;
+    enum SymbolScope scope = (enum SymbolScope) node->scope;
+    std::cout << prefix << "scope: ";
+    switch (scope) {
+        case Local: std::cout << "Local"; break;
+        case Closed: std::cout << "Closed"; break;
+        case Global: std::cout << "Global"; break; 
+    }
+    std::cout << std::endl;                 
     VISIT(node);
 }
 
