@@ -37,7 +37,7 @@ bool CheckVisitor::wasDefined(std::string const &id) {
 
 Symbol CheckVisitor::getSymbol(std::string const &id) {
     if (sym->exists(id)) {
-        Symbol s = sym->get(id);
+        return sym->get(id);
     } else {
         for(unsigned int i = globalSymStack.size(); i-- > 0;) {
             if (globalSymStack[i]->exists(id)) {
