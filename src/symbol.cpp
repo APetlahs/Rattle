@@ -37,8 +37,8 @@ void SymbolTable::printAll() {
         std::cout << i->first << " : ";
         switch (i->second.scope) {
             case Local: std::cout << "local"; break;
-            case Closed: std::cout << "local"; break;
-            case Global: std::cout << "local"; break;
+            case Closed: std::cout << "closed"; break;
+            case Global: std::cout << "global"; break;
         }
         std::cout << std::endl;
     }
