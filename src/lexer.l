@@ -16,6 +16,7 @@ extern void yyerror(const char *s);
 
 %}
 
+%option yylineno
 /* nounput to suppress "yyunput defined but not used" warning */
 %option nounput
 

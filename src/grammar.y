@@ -9,8 +9,9 @@
     ModuleNode *module;
 
     extern int yylex();
+    extern int yylineno;
     void yyerror(const char *s) {
-        fprintf(stderr, "Error: %s\n", s);
+        fprintf(stderr, "Error: %s on line %i\n", s, yylineno);
     }
 %}
 
