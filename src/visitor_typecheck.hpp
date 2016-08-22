@@ -14,7 +14,6 @@ class TypeCheckVisitor: public Visitor {
     CastMap caster;
     MemberTable memberTable;
     bool inFunction;
-    bool error;
 public:
     TypeCheckVisitor():
         curType(), caster(), memberTable(),
@@ -36,6 +35,7 @@ public:
     virtual void visit(ast::ReturnNode *node);
     virtual void visit(ast::ForNode *node);
     virtual void visit(ast::WhileNode *node);
+    bool error;
 };
 
 } // namespace rattle

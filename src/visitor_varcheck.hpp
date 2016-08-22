@@ -26,11 +26,11 @@ public:
     virtual void visit(ast::BoolNode *node);
     virtual void visit(ast::NullNode *node);
     virtual void visit(ast::StringNode *node);
+    bool error;
 private:
     SymbolTable *sym;
     SymbolTable globalSym;
     std::vector<SymbolTable*> globalSymStack;
-    bool error;
     void pushScope();
     void popScope();
     Symbol getSymbol(std::string const &id);
