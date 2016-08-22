@@ -21,5 +21,5 @@ lexer.o: lexer.l
 .PHONY: clean
 
 clean:
-	rm -f ${OBJECTS} ${EXEC} ${DEPENDS} grammar.tab.h grammar.tab.c lex.yy.c
+	rm -f ${OBJECTS} ${EXEC} ${DEPENDS}
 
